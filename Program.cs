@@ -14,14 +14,6 @@ namespace heightmap_simd
             Console.WriteLine($"Run Time = {Measure(Run8KImageTest, true)}");
         }
 
-
-
-        private static void RunTest2()
-        {
-            var rnd = new Random();
-            var buffer = Enumerable.Repeat(0, 4096 * 2160).Select(i => rnd.Next(0, 20)).ToArray();
-        }
-
         private static void Run8KImageTest()
         {
             Console.WriteLine("SIMD Addition/Multiplication");
