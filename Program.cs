@@ -35,7 +35,7 @@ namespace heightmap_simd
 
         private static void Run8KImageTest()
         {
-            Console.WriteLine("Running addition test");
+            Console.WriteLine("SIMD Addition/Multiplication");
             var rnd = new Random();
             for (int x = 0; x < 10; x++)
             {
@@ -43,37 +43,23 @@ namespace heightmap_simd
                 var b = Enumerable.Repeat(0, 4096 * 2160).Select(i => rnd.Next(0, 20)).ToArray();
 
                 var sw = Measure(() => SIMD.Add(ref a, ref b, out int[] result));
-                Console.WriteLine($"[0] Elapsed = {sw} SIMD");
-
-                sw = Measure(() =>
-                {
-                    var result2 = new int[a.Length];
-                    for (int i = 0; i < a.Length; i++)
-                    {
-                        result2[i] = a[i] + b[i];
-                    }
-                });
-                Console.WriteLine($"[1] Elapsed = {sw} NO SIMD");
+                Console.WriteLine($"[+][SIMD] Elapsed = {sw}");
+                
+                sw = Measure(() => SIMD.Multiply(ref a, ref b, out int[] result));
+                Console.WriteLine($"[*][SIMD] Elapsed = {sw}");
             }
 
-            Console.WriteLine("Running multiplication test");
+            Console.WriteLine("NoSIMD Addition/Multiplication");
             for (int x = 0; x < 10; x++)
             {
                 var a = Enumerable.Repeat(0, 4096 * 2160).Select(i => rnd.Next(0, 20)).ToArray();
                 var b = Enumerable.Repeat(0, 4096 * 2160).Select(i => rnd.Next(0, 20)).ToArray();
 
-                var sw = Measure(() => SIMD.Multiply(ref a, ref b, out int[] result));
-                Console.WriteLine($"[0] Elapsed = {sw} SIMD");
+                var sw = Measure(() => NoSIMD.Add(ref a, ref b, out int[] result));
+                Console.WriteLine($"[+][NoSIMD] Elapsed = {sw}");
 
-                sw = Measure(() =>
-                {
-                    var result2 = new int[a.Length];
-                    for (int i = 0; i < a.Length; i++)
-                    {
-                        result2[i] = a[i] * b[i];
-                    }
-                });
-                Console.WriteLine($"[1] Elapsed = {sw} NO SIMD");
+                sw = Measure(() => NoSIMD.Multiply(ref a, ref b, out int[] result));
+                Console.WriteLine($"[*][NoSIMD] Elapsed = {sw}");
             }
         }
     }
