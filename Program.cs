@@ -12,17 +12,8 @@ namespace heightmap_simd
                 throw new Exception("No hw acceleration available.");
 
             Console.WriteLine($"Run Time = {Measure(Run8KImageTest, true)}");
-            //Console.WriteLine($"Run Time = {Measure(Create8KImageTest, true)}");
         }
 
-        private static void Create8KImageTest()
-        {
-            var rnd = new Random();
-            int width = 1024, height = 768;
-            
-            byte[] buffer = Enumerable.Repeat<byte>(0, width * height).Select(i => (byte)rnd.Next(0, 20)).ToArray();
-            ImageWriter.FastWrite("./test.png", ref buffer, width, height);
-        }
         private static void Run8KImageTest()
         {
             Console.WriteLine("SIMD Addition/Multiplication");
