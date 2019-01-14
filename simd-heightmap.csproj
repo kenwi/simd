@@ -5,7 +5,8 @@
     <RootNamespace>simd_heightmap</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005"/>
-    <PackageReference Include="CoreCompat.System.Drawing" Version="1.0.0-beta006"/>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="*"/>
   </ItemGroup>
 </Project>

@@ -1,15 +1,20 @@
 using System.IO;
 using System.Drawing;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
-class ImageWriter 
+namespace heightmap_simd
 {
-    public static void Write(ref int[] buffer, string file, int width, int height)
+    class ImageWriter
     {
-        using(var output = File.OpenWrite(file))
+        public static void Write(ref int[] buffer, string file, int width, int height)
         {
-            Image<Rgba32> image = new Image<Rgba32>(width, height);
+            var image = new System.Drawing.Bitmap(width, height);
+            for(int i=0; i<buffer.Length-1; i++)
+            {
+                var index = ArrayIndex.From1DTo2D(i, width);
+                image.SetPixel(index[0], index[1], Color.FromArgb(index[0]/256, index[0]/256, index[0]/256));
+            }
             image.Save(file);
         }
     }
