@@ -57,7 +57,7 @@ namespace heightmap_simd
 
         private static TimeSpan Measure(Action method, bool verbose = false)
         {
-            if(verbose)
+            if (verbose)
                 Console.WriteLine($"Running [{method.Method.Name}]");
 
             Stopwatch stopWatch = new Stopwatch();
@@ -97,7 +97,7 @@ namespace heightmap_simd
             }
 
             Console.WriteLine("Running multiplication test");
-                       for (int x = 0; x < 10; x++)
+            for (int x = 0; x < 10; x++)
             {
                 var a = Enumerable.Repeat(0, 4096 * 2160).Select(i => rnd.Next(0, 20)).ToArray();
                 var b = Enumerable.Repeat(0, 4096 * 2160).Select(i => rnd.Next(0, 20)).ToArray();
