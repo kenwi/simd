@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Numerics;
-using System.Diagnostics;
 using System.Linq;
 
 namespace heightmap_simd
 {    
-    class Program
+    partial class Program
     {
         static void Main(string[] args)
         {
@@ -15,17 +14,7 @@ namespace heightmap_simd
             Console.WriteLine($"Run Time = {Measure(Run8KImageTest, true)}");
         }
 
-        private static TimeSpan Measure(Action method, bool verbose = false)
-        {
-            if (verbose)
-                Console.WriteLine($"Running [{method.Method.Name}]");
 
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
-            method();
-            stopWatch.Stop();
-            return stopWatch.Elapsed;
-        }
 
         private static void RunTest2()
         {
