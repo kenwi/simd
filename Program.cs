@@ -20,8 +20,8 @@ namespace heightmap_simd
             var rnd = new Random();
             for (int x = 0; x < 10; x++)
             {
-                var a = Enumerable.Repeat(0, 4096 * 2160).Select(i => rnd.Next(0, 20)).ToArray();
-                var b = Enumerable.Repeat(0, 4096 * 2160).Select(i => rnd.Next(0, 20)).ToArray();
+                var a = Enumerable.Repeat(0, 7680 * 4320).Select(i => rnd.Next(0, 20)).ToArray();
+                var b = Enumerable.Repeat(0, 7680 * 4320).Select(i => rnd.Next(0, 20)).ToArray();
 
                 var sw = Measure(() => SIMD.Add(ref a, ref b, out int[] result));
                 Console.WriteLine($"[+][SIMD] Elapsed = {sw}");
@@ -33,8 +33,8 @@ namespace heightmap_simd
             Console.WriteLine("NoSIMD Addition/Multiplication");
             for (int x = 0; x < 10; x++)
             {
-                var a = Enumerable.Repeat(0, 4096 * 2160).Select(i => rnd.Next(0, 20)).ToArray();
-                var b = Enumerable.Repeat(0, 4096 * 2160).Select(i => rnd.Next(0, 20)).ToArray();
+                var a = Enumerable.Repeat(0, 7680 * 4320).Select(i => rnd.Next(0, 20)).ToArray();
+                var b = Enumerable.Repeat(0, 7680 * 4320).Select(i => rnd.Next(0, 20)).ToArray();
 
                 var sw = Measure(() => NoSIMD.Add(ref a, ref b, out int[] result));
                 Console.WriteLine($"[+][NoSIMD] Elapsed = {sw}");
