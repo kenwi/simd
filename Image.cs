@@ -17,5 +17,11 @@ namespace heightmap_simd
             }
             image.Save(file);
         }
+
+        public static void FastWrite(string file, ref byte[] buffer, int width, int height)
+        {
+            var ms = new MemoryStream(buffer);
+            var image = Image.FromStream(ms);            
+        }
     }
 }

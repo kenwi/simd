@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Linq;
 
 namespace heightmap_simd
-{    
+{
     partial class Program
     {
         static void Main(string[] args)
@@ -18,10 +18,11 @@ namespace heightmap_simd
         private static void Create8KImageTest()
         {
             var rnd = new Random();
-            int width = 7680, height = 4320;
-            var buffer = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();            
+            int width = 1024, height = 768
+            ;
             
-            ImageWriter.Write(ref buffer, "./Test.png", width, height);
+            byte[] buffer = Enumerable.Repeat<byte>(0, width * height).Select(i => (byte)rnd.Next(0, 20)).ToArray();
+            ImageWriter.FastWrite("./test.png", ref buffer, width, height);
         }
         private static void Run8KImageTest()
         {
@@ -34,7 +35,7 @@ namespace heightmap_simd
 
                 var sw = Measure(() => SIMD.Add(ref a, ref b, out int[] result));
                 Console.WriteLine($"[+][SIMD] Elapsed = {sw}");
-                
+
                 sw = Measure(() => SIMD.Multiply(ref a, ref b, out int[] result));
                 Console.WriteLine($"[*][SIMD] Elapsed = {sw}");
             }
