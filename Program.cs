@@ -11,8 +11,8 @@ namespace heightmap_simd
             if (!Vector.IsHardwareAccelerated)
                 throw new Exception("No hw acceleration available.");
 
-            //Console.WriteLine($"Run Time = {Measure(Run8KImageTest, true)}");
-            Console.WriteLine($"Run Time = {Measure(Create8KImageTest, true)}");
+            Console.WriteLine($"Run Time = {Measure(Run8KImageTest, true)}");
+            //Console.WriteLine($"Run Time = {Measure(Create8KImageTest, true)}");
         }
 
         private static void Create8KImageTest()
