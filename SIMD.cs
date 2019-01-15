@@ -4,6 +4,19 @@ using System.Runtime.CompilerServices;
 
 class SIMD
 {
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void ExecuteOnSets(ref int[] a, ref int[] b, out int[] result, Func<Vector<int>> method)
+    {
+        result = new int[a.Length];
+        for(int i=0; i<result.Length; i+=Vector<int>.Count)
+        {
+            var va = new Vector<int>(a, i);
+            var vb = new Vector<int>(b, i);
+            method().CopyTo(result, i);
+        }
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Add(ref int[] a, ref int[] b, out int[] result)
     {
