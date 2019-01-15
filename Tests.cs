@@ -6,6 +6,14 @@ namespace heightmap_simd
 {
     partial class Program
     {
+        private static void TestWrite()
+        {
+            int width = 1024, height = 768;
+            var rnd = new Random();
+            var buffer = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 255)).ToArray();
+            ImageWriter.Write(ref buffer, "./test.png", width, height);
+        }
+
         private static void TestCreateAndShowArray()
         {
             int width = 1024, height = 768;

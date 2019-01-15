@@ -10,10 +10,12 @@ namespace heightmap_simd
         public static void Write(ref int[] buffer, string file, int width, int height)
         {
             var image = new System.Drawing.Bitmap(width, height);
-            for(int i=0; i<buffer.Length-1; i++)
+            for (int i = 0; i < buffer.Length - 1; i++)
             {
                 var index = ArrayIndex.From1DTo2D(i, width);
-                image.SetPixel(index[0], index[1], Color.FromArgb(index[0]/256, index[0]/256, index[0]/256));
+                var color =   Color.FromArgb(buffer[i], buffer[i], buffer[i]);
+                image.SetPixel(index[0], index[1], color);
+                
             }
             image.Save(file);
         }
@@ -21,7 +23,7 @@ namespace heightmap_simd
         public static void FastWrite(string file, ref byte[] buffer, int width, int height)
         {
             var ms = new MemoryStream(buffer);
-            var image = Image.FromStream(ms);            
+            var image = Image.FromStream(ms);
         }
     }
 }
