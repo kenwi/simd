@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace heightmap_simd
+namespace simd
 {
     public static class ArrayIndex
     {

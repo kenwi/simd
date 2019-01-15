@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <RootNamespace>simd_heightmap</RootNamespace>
+    <RootNamespace>simd</RootNamespace>
   </PropertyGroup>
   <ItemGroup>&#xD;
   </ItemGroup>

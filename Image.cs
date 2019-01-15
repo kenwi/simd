@@ -7,7 +7,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 using Image = SixLabors.ImageSharp.Image;
 
-namespace heightmap_simd
+namespace simd
 {
     class ImageWriter
     {

@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Linq;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace heightmap_simd
+namespace simd
 {
     partial class Program
     {

@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace heightmap_simd
+namespace simd
 {
     partial class Program
     {
