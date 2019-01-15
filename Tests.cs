@@ -24,7 +24,8 @@ namespace simd
             Func<double, double> getSurfaceBrightness = (r) => {
                 double i0 = rnd.NextDouble(), k = 0.02, a = 200;
                 double bulgeradius = (width + height) * 0.05;
-                return r < bulgeradius ? getCentralIntensity(r, i0, k) : getOuterIntensity(r - bulgeradius, getCentralIntensity(bulgeradius, i0, k), a);
+                return r < bulgeradius ? getCentralIntensity(r, i0, k) : 
+                                         getOuterIntensity(r - bulgeradius, getCentralIntensity(bulgeradius, i0, k), a);
             };
 
             for (int i = 0; i < width * height; i++)
@@ -96,33 +97,39 @@ namespace simd
 
         private static void Test8KAddMultiply()
         {
-            Console.WriteLine("SIMD Addition/Multiplication");
-            int width = 7680, height = 4320;
-
+            int width = 7680, height = 4320, n = 5;
             var rnd = new Random();
-            for (int x = 0; x < 3; x++)
+            int[] result = null;
+            var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
+            var b = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
+            
+            Console.WriteLine("SIMD Addition/Multiplication");
+            Console.WriteLine($"{n} first values of [a] = [{string.Join(", ", a.Take(n))}]");
+            Console.WriteLine($"{n} first values of [b] = [{string.Join(", ", b.Take(n))}]");
+            for (int x = 0; x < 5; x++)
             {
-                var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
-                var b = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
-
-                var sw = Measure(() => SIMD.Add(ref a, ref b, out int[] result));
+                var sw = Measure(() => SIMD.Add(ref a, ref b, out result));
                 Console.WriteLine($"[+][SIMD] Elapsed = {sw}");
+                Console.WriteLine($"{n} first values of [result] = [{string.Join(", ", result.Take(n))}]");
 
-                sw = Measure(() => SIMD.Multiply(ref a, ref b, out int[] result));
+                sw = Measure(() => SIMD.Multiply(ref a, ref b, out result));
                 Console.WriteLine($"[*][SIMD] Elapsed = {sw}");
+                Console.WriteLine($"{n} first values of [result] = [{string.Join(", ", result.Take(n))}]");
             }
 
+            Console.WriteLine();
             Console.WriteLine("NoSIMD Addition/Multiplication");
-            for (int x = 0; x < 3; x++)
+            Console.WriteLine($"{n} first values of [a] = [{string.Join(", ", a.Take(n))}]");
+            Console.WriteLine($"{n} first values of [b] = [{string.Join(", ", b.Take(n))}]");
+            for (int x = 0; x < 5; x++)
             {
-                var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
-                var b = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
-
-                var sw = Measure(() => NoSIMD.Add(ref a, ref b, out int[] result));
+                var sw = Measure(() => NoSIMD.Add(ref a, ref b, out result));
                 Console.WriteLine($"[+][NoSIMD] Elapsed = {sw}");
+                Console.WriteLine($"{n} first values of [result] = [{string.Join(", ", result.Take(n))}]");
 
-                sw = Measure(() => NoSIMD.Multiply(ref a, ref b, out int[] result));
+                sw = Measure(() => NoSIMD.Multiply(ref a, ref b, out result));
                 Console.WriteLine($"[*][NoSIMD] Elapsed = {sw}");
+                Console.WriteLine($"{n} first values of [result] = [{string.Join(", ", result.Take(n))}]");
             }
         }
     }
