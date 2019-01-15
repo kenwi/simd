@@ -6,12 +6,20 @@ namespace heightmap_simd
 {
     partial class Program
     {
+        private static void CreateDirectoryIfNotExists(string directory)
+        {
+            if(!System.IO.Directory.Exists(directory))
+                System.IO.Directory.CreateDirectory(directory);
+        }
         private static void TestWrite()
         {
             int width = 1024, height = 768;
             var rnd = new Random();
             var buffer = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 255)).ToArray();
-            ImageWriter.Write(ref buffer, "./test.png", width, height);
+            var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture);
+
+            CreateDirectoryIfNotExists("./data");
+            ImageWriter.Write(ref buffer, $"./data/TestWrite-{time}.png", width, height);
         }
 
         private static void TestCreateAndShowArray()
@@ -20,7 +28,7 @@ namespace heightmap_simd
             var rnd = new Random();
             Console.WriteLine($"Creating dataset {width}x{height} = {width * height} pixels");
             var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 255)).ToArray();
-            Console.WriteLine($"10 first values: [{string.Join(", ", a.Take(10))}]");
+            Console.WriteLine($"10 first values= [{string.Join(", ", a.Take(10))}]");
         }
 
         private static void Test8KAddMultiply()
