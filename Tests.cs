@@ -15,27 +15,26 @@ namespace heightmap_simd
 
         private static void TestIntensityImage()
         {
-            int width = 7680, height = 4320;
-            var buffer = new Rgba32[width*height];
+            int width = 1920, height = 1080;
+            var buffer = new Rgba32[width * height];
 
-            Func<double, double, double, double> getCentralIntensity = (r, i0, k) => {
-                return i0 * Math.Exp(-k * Math.Pow(r, 0.25));
-            };
-            Func<double, double, double, double> getOuterIntensity = (r, i0, a) => {
-                return i0 * Math.Exp(-r / a);
-            };
-            Func<double, double> getSurfaceBrightness = (r) => {
+            Func<double, double, double, double> getCentralIntensity = (r, i0, k) => i0 * Math.Exp(-k * Math.Pow(r, 0.25));
+            Func<double, double, double, double> getOuterIntensity = (r, i0, a) => i0 * Math.Exp(-r / a);
+
+            Func<double, double> getSurfaceBrightness = (r) =>
+            {
                 double i0 = 1.0, k = 0.02, a = 200;
                 double bulgeradius = (width + height) * 0.05;
-                return r < bulgeradius ? getCentralIntensity(r, i0, k) : getOuterIntensity(r-bulgeradius, getCentralIntensity(bulgeradius, i0, k), a);
+                return r < bulgeradius ? getCentralIntensity(r, i0, k) : getOuterIntensity(r - bulgeradius, getCentralIntensity(bulgeradius, i0, k), a);
             };
 
+            var rnd = new Random();
             for (int i = 0; i < width * height; i++)
             {
                 var xy = ArrayIndex.From1DTo2D(i, width);
-                var distance = (new Vector2(xy[0], xy[1]) - new Vector2(width / 2, height / 2)).Length();                
-                var intensity = (float)Math.Clamp(getSurfaceBrightness(distance), 0, 1);
-                var color = new Rgba32(intensity, intensity, intensity); 
+                var distance = (new Vector2(xy[0], xy[1]) - new Vector2(width / 2, height / 2)).Length();
+                var intensity = (float)Math.Clamp(getSurfaceBrightness(distance), 0, 1) * (float)rnd.NextDouble();
+                var color = new Rgba32(intensity, intensity, intensity);
                 buffer[i] = color;
             }
 
@@ -100,11 +99,13 @@ namespace heightmap_simd
         private static void Test8KAddMultiply()
         {
             Console.WriteLine("SIMD Addition/Multiplication");
+            int width = 7680, height = 4320;
+
             var rnd = new Random();
             for (int x = 0; x < 3; x++)
             {
-                var a = Enumerable.Repeat(0, 7680 * 4320).Select(i => rnd.Next(0, 20)).ToArray();
-                var b = Enumerable.Repeat(0, 7680 * 4320).Select(i => rnd.Next(0, 20)).ToArray();
+                var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
+                var b = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
 
                 var sw = Measure(() => SIMD.Add(ref a, ref b, out int[] result));
                 Console.WriteLine($"[+][SIMD] Elapsed = {sw}");
@@ -116,8 +117,8 @@ namespace heightmap_simd
             Console.WriteLine("NoSIMD Addition/Multiplication");
             for (int x = 0; x < 3; x++)
             {
-                var a = Enumerable.Repeat(0, 7680 * 4320).Select(i => rnd.Next(0, 20)).ToArray();
-                var b = Enumerable.Repeat(0, 7680 * 4320).Select(i => rnd.Next(0, 20)).ToArray();
+                var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
+                var b = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
 
                 var sw = Measure(() => NoSIMD.Add(ref a, ref b, out int[] result));
                 Console.WriteLine($"[+][NoSIMD] Elapsed = {sw}");
