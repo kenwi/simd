@@ -23,9 +23,9 @@ namespace heightmap_simd
             image.Save(file);
         }
 
-        public static void FastWrite(ref Rgba32[] buffer, string file,  int width, int height)
+        public static void FastWrite(ref Rgba32[] buffer, string file, int width, int height)
         {
-            using(var image = Image.LoadPixelData<Rgba32>(buffer, width, height))
+            using (var image = Image.LoadPixelData<Rgba32>(buffer, width, height))
             {
                 image.Save(file);
             }
