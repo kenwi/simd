@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using System.Linq;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace heightmap_simd
 {
@@ -21,6 +22,17 @@ namespace heightmap_simd
             CreateDirectoryIfNotExists("./data");
             ImageWriter.Write(ref buffer, $"./data/TestWrite-{time}.png", width, height);
         }
+
+        private static void TestFastWrite()
+        {
+            int width = 1024, height = 768;
+            var rnd = new Random();
+            var buffer = Enumerable.Repeat(0, width * height).Select(i => new Rgba32((byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255))).ToArray();
+            var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
+
+            CreateDirectoryIfNotExists("./data");
+            ImageWriter.FastWrite(ref buffer, $"./data/FastWrite-{time}.png",  width, height);
+        }
         
         private static void Test8KWrite()
         {
@@ -31,6 +43,17 @@ namespace heightmap_simd
 
             CreateDirectoryIfNotExists("./data");
             ImageWriter.Write(ref buffer, $"./data/TestWrite8K-{time}.png", width, height);
+        }
+        
+        private static void Test8KFastWrite()
+        {
+           int width = 7680, height = 4320;
+            var rnd = new Random();
+            var buffer = Enumerable.Repeat(0, width * height).Select(i => new Rgba32((byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255))).ToArray();
+            var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
+
+            CreateDirectoryIfNotExists("./data");
+            ImageWriter.FastWrite(ref buffer, $"./data/8KFastWrite-{time}.png",  width, height);
         }
 
         private static void TestCreateAndShowArray()
