@@ -53,11 +53,21 @@ namespace simd
         {
             var buffer = new Rgba32[width * height];
             var rnd = new Random();
-            var fn = new FastNoise();
+            var continent = new FastNoise();
+            continent.SetFractalOctaves(6);
+            continent.SetFrequency(0.0007f);
 
             for(int i=0; i<buffer.Length; i++)
             {
+                var p0 = ArrayIndex.From1DTo2D(i, width);
+                var pixelValue = continent.GetCellular(p0.X, p0.Y);
 
+                if(pixelValue > 0)
+                {
+                    buffer[i] = new Rgba32(pixelValue, 10 + 1.0f * pixelValue, 0.0f);
+                }
+                else
+                    buffer[i] = new Rgba32(pixelValue, 0.0f, 10 + 1.0f *  pixelValue);
             }
 
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
