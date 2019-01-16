@@ -97,7 +97,7 @@ namespace simd
 
         private static void Test8KAddMultiply()
         {
-            int width = 7680, height = 4320, n = 5;
+            int width = 7680, height = 4320, n = 5, runs = 2;
             var rnd = new Random();
             int[] result = null;
             var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
@@ -106,30 +106,26 @@ namespace simd
             Console.WriteLine("SIMD Addition/Multiplication");
             Console.WriteLine($"{n} first values of [a] = [{string.Join(", ", a.Take(n))}]");
             Console.WriteLine($"{n} first values of [b] = [{string.Join(", ", b.Take(n))}]");
-            for (int x = 0; x < 5; x++)
+            for (int x = 0; x < runs; x++)
             {
                 var sw = Measure(() => SIMD.Add(ref a, ref b, out result));
-                Console.WriteLine($"[+][SIMD] Elapsed = {sw}");
-                Console.WriteLine($"{n} first values of [result] = [{string.Join(", ", result.Take(n))}]");
+                Console.WriteLine($"[+] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
 
                 sw = Measure(() => SIMD.Multiply(ref a, ref b, out result));
-                Console.WriteLine($"[*][SIMD] Elapsed = {sw}");
-                Console.WriteLine($"{n} first values of [result] = [{string.Join(", ", result.Take(n))}]");
+                Console.WriteLine($"[*] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
             }
 
             Console.WriteLine();
             Console.WriteLine("NoSIMD Addition/Multiplication");
             Console.WriteLine($"{n} first values of [a] = [{string.Join(", ", a.Take(n))}]");
             Console.WriteLine($"{n} first values of [b] = [{string.Join(", ", b.Take(n))}]");
-            for (int x = 0; x < 5; x++)
+            for (int x = 0; x < runs; x++)
             {
                 var sw = Measure(() => NoSIMD.Add(ref a, ref b, out result));
-                Console.WriteLine($"[+][NoSIMD] Elapsed = {sw}");
-                Console.WriteLine($"{n} first values of [result] = [{string.Join(", ", result.Take(n))}]");
+                Console.WriteLine($"[+] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
 
                 sw = Measure(() => NoSIMD.Multiply(ref a, ref b, out result));
-                Console.WriteLine($"[*][NoSIMD] Elapsed = {sw}");
-                Console.WriteLine($"{n} first values of [result] = [{string.Join(", ", result.Take(n))}]");
+                Console.WriteLine($"[*] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
             }
         }
     }
