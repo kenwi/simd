@@ -25,27 +25,27 @@ namespace simd
 
         private static void TestExecuteOnSetsMethod()
         {
-            int n = 5, runs = 5;
+            int printNumberOfValues = 5, testNumberOfRuns = 5;
             var rnd = new Random();
             int[] result = null;
             var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(1, 255)).ToArray();
             var b = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(1, 255)).ToArray();
             
-            Console.WriteLine($"{n} first values of [a] = [{string.Join(", ", a.Take(n))}]");
-            Console.WriteLine($"{n} first values of [b] = [{string.Join(", ", b.Take(n))}]");
-            for (int x = 0; x < runs; x++)
+            Console.WriteLine($"{printNumberOfValues} first values of [a] = [{string.Join(", ", a.Take(printNumberOfValues))}]");
+            Console.WriteLine($"{printNumberOfValues} first values of [b] = [{string.Join(", ", b.Take(printNumberOfValues))}]");
+            for (int x = 0; x < testNumberOfRuns; x++)
             {
-                var sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, out result, (va, vb) => va + vb), verbose:false);
-                Console.WriteLine($"[+] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
+                var sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, out result, (va, vb) => va + vb));
+                Console.WriteLine($"[+] [{sw}] [{printNumberOfValues}] first values of [result] = [{string.Join(", ", result.Take(printNumberOfValues))}]");
 
-                sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, out result, (va, vb) => va - vb), verbose:false);
-                Console.WriteLine($"[-] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
+                sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, out result, (va, vb) => va - vb));
+                Console.WriteLine($"[-] [{sw}] [{printNumberOfValues}] first values of [result] = [{string.Join(", ", result.Take(printNumberOfValues))}]");
                 
-                sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, out result, (va, vb) => va * vb), verbose:false);
-                Console.WriteLine($"[*] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
+                sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, out result, (va, vb) => va * vb));
+                Console.WriteLine($"[*] [{sw}] [{printNumberOfValues}] first values of [result] = [{string.Join(", ", result.Take(printNumberOfValues))}]");
                 
-                sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, out result, (va, vb) => va / vb), verbose:false);
-                Console.WriteLine($"[/] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
+                sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, out result, (va, vb) => va / vb));
+                Console.WriteLine($"[/] [{sw}] [{printNumberOfValues}] first values of [result] = [{string.Join(", ", result.Take(printNumberOfValues))}]");
             }
         }
 
