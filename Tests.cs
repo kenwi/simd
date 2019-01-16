@@ -2,20 +2,55 @@ using System;
 using System.Numerics;
 using System.Linq;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Collections.Generic;
 
 namespace simd
 {
     partial class Program
     {
+        static int width = 1020;
+        static int height = 1280;
+
         private static void CreateDirectoryIfNotExists(string directory)
         {
             if (!System.IO.Directory.Exists(directory))
                 System.IO.Directory.CreateDirectory(directory);
         }
 
+        private static IEnumerable<Rgba32> GetRandomSet(int num)
+        {
+            var rnd = new Random();
+            return Enumerable.Repeat(0, num).Select(i => new Rgba32((byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255)));;
+        }
+
+        private static void TestExecuteOnSetsMethod()
+        {
+            int n = 5, runs = 5;
+            var rnd = new Random();
+            int[] result = null;
+            var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(1, 255)).ToArray();
+            var b = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(1, 255)).ToArray();
+            
+            Console.WriteLine($"{n} first values of [a] = [{string.Join(", ", a.Take(n))}]");
+            Console.WriteLine($"{n} first values of [b] = [{string.Join(", ", b.Take(n))}]");
+            for (int x = 0; x < runs; x++)
+            {
+                var sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, out result, (va, vb) => va + vb), verbose:false);
+                Console.WriteLine($"[+] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
+
+                sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, out result, (va, vb) => va - vb), verbose:false);
+                Console.WriteLine($"[-] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
+                
+                sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, out result, (va, vb) => va * vb), verbose:false);
+                Console.WriteLine($"[*] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
+                
+                sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, out result, (va, vb) => va / vb), verbose:false);
+                Console.WriteLine($"[/] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
+            }
+        }
+
         private static void TestIntensityImage()
         {
-            int width = 1920, height = 1080;
             var buffer = new Rgba32[width * height];
             var rnd = new Random();
             var fn = new FastNoise();
@@ -45,7 +80,6 @@ namespace simd
 
         private static void Test1024x768Write()
         {
-            int width = 1024, height = 768;
             var rnd = new Random();
             var buffer = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 255)).ToArray();
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
@@ -56,7 +90,6 @@ namespace simd
 
         private static void TestFastWrite()
         {
-            int width = 1024, height = 768;
             var rnd = new Random();
             var buffer = Enumerable.Repeat(0, width * height).Select(i => new Rgba32((byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255))).ToArray();
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
@@ -67,7 +100,6 @@ namespace simd
 
         private static void Test8KWrite()
         {
-            int width = 7680, height = 4320;
             var rnd = new Random();
             var buffer = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 255)).ToArray();
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
@@ -78,7 +110,6 @@ namespace simd
 
         private static void Test8KFastWrite()
         {
-            int width = 7680, height = 4320;
             var rnd = new Random();
             var buffer = Enumerable.Repeat(0, width * height).Select(i => new Rgba32((byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255))).ToArray();
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
@@ -89,7 +120,6 @@ namespace simd
 
         private static void TestCreateAndShowArray()
         {
-            int width = 1024, height = 768;
             var rnd = new Random();
             Console.WriteLine($"Creating dataset {width}x{height} = {width * height} pixels");
             var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 255)).ToArray();
@@ -98,7 +128,7 @@ namespace simd
 
         private static void Test8KAddMultiply()
         {
-            int width = 7680, height = 4320, n = 5, runs = 2;
+            int n = 5, runs = 2;
             var rnd = new Random();
             int[] result = null;
             var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();

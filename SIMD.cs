@@ -1,19 +1,19 @@
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using SixLabors.ImageSharp.PixelFormats;
 
 class SIMD
 {
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ExecuteOnSets(ref int[] a, ref int[] b, out int[] result, Func<Vector<int>> method)
-    {
+    public static void ExecuteOnSets(ref int[] a, ref int[] b, out int[] result, Func<Vector<int>, Vector<int>, Vector<int>> method)
+    {          
         result = new int[a.Length];
-        for(int i=0; i<result.Length; i+=Vector<int>.Count)
+        for(int i=0; i<a.Length; i+=Vector<int>.Count)
         {
             var va = new Vector<int>(a, i);
             var vb = new Vector<int>(b, i);
-            method().CopyTo(result, i);
+            method(va, vb).CopyTo(result, i);
         }
     }
 
