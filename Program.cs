@@ -10,13 +10,13 @@ namespace simd
             if (!Vector.IsHardwareAccelerated)
                 throw new Exception("No hw acceleration available.");
 
-            //Console.WriteLine($"Run Time = {Measure(TestIntensityImage, true)}" + Environment.NewLine);
+            Console.WriteLine($"Run Time = {Measure(TestIntensityImage, true)}" + Environment.NewLine);
             //Console.WriteLine($"Run Time = {Measure(TestFastWrite, true)}" + Environment.NewLine);
             //Console.WriteLine($"Run Time = {Measure(Test8KFastWrite, true)}" + Environment.NewLine);
             //Console.WriteLine($"Run Time = {Measure(Test1024x768Write, true)}" + Environment.NewLine);
             //Console.WriteLine($"Run Time = {Measure(Test8KWrite, true)}" + Environment.NewLine);
             //Console.WriteLine($"Run Time = {Measure(TestCreateAndShowArray, true)}"+ Environment.NewLine);
-            Console.WriteLine($"Run Time = {Measure(Test8KAddMultiply, true)}"+ Environment.NewLine);
+            //Console.WriteLine($"Run Time = {Measure(Test8KAddMultiply, true)}"+ Environment.NewLine);
         }
     }
 }

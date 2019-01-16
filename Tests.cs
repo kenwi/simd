@@ -18,11 +18,12 @@ namespace simd
             int width = 1920, height = 1080;
             var buffer = new Rgba32[width * height];
             var rnd = new Random();
+            var fn = new FastNoise();
 
             Func<double, double, double, double> getCentralIntensity = (r, i0, k) => i0 * Math.Exp(-k * Math.Pow(r, 0.25));
             Func<double, double, double, double> getOuterIntensity = (r, i0, a) => i0 * Math.Exp(-r / a);
             Func<double, double> getSurfaceBrightness = (r) => {
-                double i0 = rnd.NextDouble(), k = 0.02, a = 200;
+                double i0 = 1.0, k = 0.02, a = 200;
                 double bulgeradius = (width + height) * 0.05;
                 return r < bulgeradius ? getCentralIntensity(r, i0, k) : 
                                          getOuterIntensity(r - bulgeradius, getCentralIntensity(bulgeradius, i0, k), a);
@@ -32,7 +33,7 @@ namespace simd
             {
                 var xy = ArrayIndex.From1DTo2D(i, width);
                 var distance = (new Vector2(xy[0], xy[1]) - new Vector2(width / 2, height / 2)).Length();
-                var intensity = (float)Math.Clamp(getSurfaceBrightness(distance), 0, 1);
+                var intensity = (float)Math.Clamp(getSurfaceBrightness(distance), 0, 1) * fn.GetPerlinFractal(xy[0]*5, xy[1]*5);
                 var color = new Rgba32(intensity, intensity, intensity);
                 buffer[i] = color;
             }

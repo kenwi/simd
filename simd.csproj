@@ -4,10 +4,8 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <RootNamespace>simd</RootNamespace>
   </PropertyGroup>
-  <ItemGroup>&#xD;
-  </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="*"/>
-    <PackageReference Include="Veldrid.ImageSharp" Version="4.5.0"/>
+    <PackageReference Include="System.Drawing.Common" Version="*" />
+    <PackageReference Include="Veldrid.ImageSharp" Version="4.5.0" />
   </ItemGroup>
 </Project>
