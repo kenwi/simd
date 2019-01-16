@@ -8,8 +8,8 @@ namespace simd
 {
     partial class Program
     {
-        static int width = 1020;
-        static int height = 1280;
+        static int width = 4096;
+        static int height = 2160;
 
         private static void CreateDirectoryIfNotExists(string directory)
         {
@@ -31,8 +31,8 @@ namespace simd
             var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(1, 255)).ToArray();
             var b = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(1, 255)).ToArray();
             
-            Console.WriteLine($"{printNumberOfValues} first values of [a] = [{string.Join(", ", a.Take(printNumberOfValues))}]");
-            Console.WriteLine($"{printNumberOfValues} first values of [b] = [{string.Join(", ", b.Take(printNumberOfValues))}]");
+            Console.WriteLine($"[{printNumberOfValues}] first values of [a] = [{string.Join(", ", a.Take(printNumberOfValues))}]");
+            Console.WriteLine($"[{printNumberOfValues}] first values of [b] = [{string.Join(", ", b.Take(printNumberOfValues))}]");
             for (int x = 0; x < testNumberOfRuns; x++)
             {
                 var sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, out result, (va, vb) => va + vb));
@@ -75,7 +75,7 @@ namespace simd
 
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
             CreateDirectoryIfNotExists("./data");
-            ImageWriter.FastWrite(ref buffer, $"./data/IntensityImage-{time}.png", width, height);
+            ImageWriter.FastWrite(ref buffer, $"./data/TestIntensityImage-{time}.png", width, height);
         }
 
         private static void Test1024x768Write()
@@ -85,7 +85,7 @@ namespace simd
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
 
             CreateDirectoryIfNotExists("./data");
-            ImageWriter.Write(ref buffer, $"./data/TestWrite-{time}.png", width, height);
+            ImageWriter.Write(ref buffer, $"./data/Test1024x768Write-{time}.png", width, height);
         }
 
         private static void TestFastWrite()
@@ -95,17 +95,17 @@ namespace simd
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
 
             CreateDirectoryIfNotExists("./data");
-            ImageWriter.FastWrite(ref buffer, $"./data/FastWrite-{time}.png", width, height);
+            ImageWriter.FastWrite(ref buffer, $"./data/TestFastWrite-{time}.png", width, height);
         }
 
-        private static void Test8KWrite()
+        private static void TestWrite()
         {
             var rnd = new Random();
             var buffer = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 255)).ToArray();
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
 
             CreateDirectoryIfNotExists("./data");
-            Measure(() => ImageWriter.Write(ref buffer, $"./data/TestWrite8K-{time}.png", width, height), true);
+            Measure(() => ImageWriter.Write(ref buffer, $"./data/TestWrite-{time}.png", width, height), true);
         }
 
         private static void Test8KFastWrite()
@@ -115,7 +115,7 @@ namespace simd
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
 
             CreateDirectoryIfNotExists("./data");
-            Measure(() => ImageWriter.FastWrite(ref buffer, $"./data/8KFastWrite-{time}.png", width, height), true);
+            Measure(() => ImageWriter.FastWrite(ref buffer, $"./data/Test8KFastWrite-{time}.png", width, height), true);
         }
 
         private static void TestCreateAndShowArray()
@@ -126,17 +126,17 @@ namespace simd
             Console.WriteLine($"10 first values= [{string.Join(", ", a.Take(10))}]");
         }
 
-        private static void Test8KAddMultiply()
+        private static void TestAddMultiply()
         {
-            int n = 5, runs = 2;
+            int n = 5, runs = 5;
             var rnd = new Random();
             int[] result = null;
             var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
             var b = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
             
             Console.WriteLine("SIMD Addition/Multiplication");
-            Console.WriteLine($"{n} first values of [a] = [{string.Join(", ", a.Take(n))}]");
-            Console.WriteLine($"{n} first values of [b] = [{string.Join(", ", b.Take(n))}]");
+            Console.WriteLine($"[{n}] first values of [a] = [{string.Join(", ", a.Take(n))}]");
+            Console.WriteLine($"[{n}] first values of [b] = [{string.Join(", ", b.Take(n))}]");
             for (int x = 0; x < runs; x++)
             {
                 var sw = Measure(() => SIMD.Add(ref a, ref b, out result));
@@ -148,8 +148,8 @@ namespace simd
 
             Console.WriteLine();
             Console.WriteLine("NoSIMD Addition/Multiplication");
-            Console.WriteLine($"{n} first values of [a] = [{string.Join(", ", a.Take(n))}]");
-            Console.WriteLine($"{n} first values of [b] = [{string.Join(", ", b.Take(n))}]");
+            Console.WriteLine($"[{n}] first values of [a] = [{string.Join(", ", a.Take(n))}]");
+            Console.WriteLine($"[{n}] first values of [b] = [{string.Join(", ", b.Take(n))}]");
             for (int x = 0; x < runs; x++)
             {
                 var sw = Measure(() => NoSIMD.Add(ref a, ref b, out result));
