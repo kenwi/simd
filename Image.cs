@@ -18,7 +18,7 @@ namespace simd
             {
                 var index = ArrayIndex.From1DTo2D(i, width);
                 var color = Color.FromArgb(buffer[i], buffer[i], buffer[i]);
-                image.SetPixel(index[0], index[1], color);
+                image.SetPixel((int)index.X, (int)index.Y, color);
             }
             image.Save(file);
         }

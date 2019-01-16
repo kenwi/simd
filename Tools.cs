@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace simd
@@ -11,12 +12,9 @@ namespace simd
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int[] From1DTo2D(int index, int width)
+        public static Vector2  From1DTo2D(int index, int width)
         {
-            return new int[] {
-                index % width,
-                index / width
-            };
+            return new Vector2(index % width, index / width);
         }
     }
 }

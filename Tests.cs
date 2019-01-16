@@ -49,6 +49,22 @@ namespace simd
             }
         }
 
+        private static void TestGenerateBasicMap()
+        {
+            var buffer = new Rgba32[width * height];
+            var rnd = new Random();
+            var fn = new FastNoise();
+
+            for(int i=0; i<buffer.Length; i++)
+            {
+
+            }
+
+            var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
+            CreateDirectoryIfNotExists("./data");
+            ImageWriter.FastWrite(ref buffer, $"./data/TestGenerateBasicMap-{time}.png", width, height);
+        }
+
         private static void TestIntensityImage()
         {
             var buffer = new Rgba32[width * height];
@@ -66,9 +82,9 @@ namespace simd
 
             for (int i = 0; i < width * height; i++)
             {
-                var xy = ArrayIndex.From1DTo2D(i, width);
-                var distance = (new Vector2(xy[0], xy[1]) - new Vector2(width / 2, height / 2)).Length();
-                var intensity = (float)Math.Clamp(getSurfaceBrightness(distance), 0, 1) * fn.GetPerlinFractal(xy[0]*5, xy[1]*5);
+                var p0 = ArrayIndex.From1DTo2D(i, width);
+                var distance = (p0 - new Vector2(width / 2, height / 2)).Length();
+                var intensity = (float)Math.Clamp(getSurfaceBrightness(distance), 0, 1) * fn.GetPerlinFractal(p0.X * 5, p0.Y * 5);
                 var color = new Rgba32(intensity, intensity, intensity);
                 buffer[i] = color;
             }
