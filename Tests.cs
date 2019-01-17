@@ -8,8 +8,8 @@ namespace simd
 {
     partial class Program
     {
-        static int width = 4096;
-        static int height = 2160;
+        static int width = 4096/2;
+        static int height = 2160/2;
 
         private static void CreateDirectoryIfNotExists(string directory)
         {
@@ -21,6 +21,15 @@ namespace simd
         {
             var rnd = new Random();
             return Enumerable.Repeat(0, num).Select(i => new Rgba32((byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255)));;
+        }
+
+        private static void TestGetRandomSurfaceField()
+        {
+            var grid = new int[1000];
+            var rnd = new Random();
+            var geometry = new SphericalGeometry();
+            var zMultipliers = geometry.GetRandomSurfaceField(grid, rnd);
+            Console.WriteLine($"[10] first values of [zMultipliers] = [{string.Join(", ", zMultipliers.Take(10))}]");
         }
 
         private static void TestExecuteOnSetsMethod()
