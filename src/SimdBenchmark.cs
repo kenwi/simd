@@ -20,7 +20,7 @@ namespace simd
         {
             width = 1920;
             height = 1080;
-            rnd = new Random();
+            rnd = new Random(Environment.TickCount);
             a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(1, 1000)).ToArray();
             b = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(1, 1000)).ToArray();
             c = new int[width * height];

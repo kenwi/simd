@@ -11,6 +11,9 @@ namespace simd
         static int width = 1920;
         static int height = 1080;
 
+        static Random rnd = new Random(Environment.TickCount);
+        static FastNoise fn = new FastNoise(Environment.TickCount);
+
         private static void CreateDirectoryIfNotExists(string directory)
         {
             if (!System.IO.Directory.Exists(directory))
@@ -26,7 +29,6 @@ namespace simd
         private static void TestGetRandomSurfaceField()
         {
             var grid = new int[1000];
-            var rnd = new Random();
             var geometry = new SphericalGeometry();
             var zMultipliers = geometry.GetRandomSurfaceField(grid, rnd);
             Console.WriteLine($"[10] first values of [zMultipliers] = [{string.Join(", ", zMultipliers.Take(10))}]");
@@ -35,7 +37,6 @@ namespace simd
         private static void TestExecuteOnSetsMethod()
         {
             int printNumberOfValues = 5, testNumberOfRuns = 5;
-            var rnd = new Random();
             int[] result = null;
             var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(1, 255)).ToArray();
             var b = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(1, 255)).ToArray();
@@ -61,15 +62,13 @@ namespace simd
         private static void TestGenerateBasicMap()
         {
             var buffer = new Rgba32[width * height];
-            var rnd = new Random();
-            var continent = new FastNoise();
-            continent.SetFractalOctaves(6);
-            continent.SetFrequency(0.0007f);
+            fn.SetFractalOctaves(6);
+            fn.SetFrequency(0.0007f);
 
             for(int i=0; i<buffer.Length; i++)
             {
                 var p0 = ArrayIndex.From1DTo2D(i, width);
-                var pixelValue = continent.GetCellular(p0.X, p0.Y);
+                var pixelValue = fn.GetCellular(p0.X, p0.Y);
 
                 if(pixelValue > 0)
                 {
@@ -87,8 +86,6 @@ namespace simd
         private static void TestIntensityImage()
         {
             var buffer = new Rgba32[width * height];
-            var rnd = new Random();
-            var fn = new FastNoise();
 
             Func<double, double, double, double> getCentralIntensity = (r, i0, k) => i0 * Math.Exp(-k * Math.Pow(r, 0.25));
             Func<double, double, double, double> getOuterIntensity = (r, i0, a) => i0 * Math.Exp(-r / a);
@@ -103,7 +100,7 @@ namespace simd
             {
                 var p0 = ArrayIndex.From1DTo2D(i, width);
                 var distance = (p0 - new Vector2(width / 2, height / 2)).Length();
-                var intensity = (float)Math.Clamp(getSurfaceBrightness(distance), 0, 1) * fn.GetPerlinFractal(p0.X * 5, p0.Y * 5);
+                var intensity = (float)Math.Clamp(getSurfaceBrightness(distance), 0, 1);
                 var color = new Rgba32(intensity, intensity, intensity);
                 buffer[i] = color;
             }
@@ -115,7 +112,6 @@ namespace simd
 
         private static void Test1024x768Write()
         {
-            var rnd = new Random();
             var buffer = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 255)).ToArray();
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
 
@@ -125,7 +121,6 @@ namespace simd
 
         private static void TestFastWrite()
         {
-            var rnd = new Random();
             var buffer = Enumerable.Repeat(0, width * height).Select(i => new Rgba32((byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255))).ToArray();
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
 
@@ -135,7 +130,6 @@ namespace simd
 
         private static void TestWrite()
         {
-            var rnd = new Random();
             var buffer = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 255)).ToArray();
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
 
@@ -145,7 +139,6 @@ namespace simd
 
         private static void Test8KFastWrite()
         {
-            var rnd = new Random();
             var buffer = Enumerable.Repeat(0, width * height).Select(i => new Rgba32((byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255))).ToArray();
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
 
@@ -155,7 +148,6 @@ namespace simd
 
         private static void TestCreateAndShowArray()
         {
-            var rnd = new Random();
             Console.WriteLine($"Creating dataset {width}x{height} = {width * height} pixels");
             var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 255)).ToArray();
             Console.WriteLine($"10 first values= [{string.Join(", ", a.Take(10))}]");
@@ -164,7 +156,6 @@ namespace simd
         private static void TestAddMultiply()
         {
             int n = 5, runs = 5;
-            var rnd = new Random();
             int[] result = new int[width*height];
             var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
             var b = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
