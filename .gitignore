@@ -2,3 +2,4 @@ obj/
 bin/
 data/
 *.json
+BenchmarkDotNet.Artifacts/
