@@ -12,7 +12,6 @@ namespace simd
             if (!Vector.IsHardwareAccelerated)
                 throw new Exception("No hw acceleration available.");
 
-            //var config = new BenchmarkDotNet.Configs.DebugInProcessConfig();
             var result = BenchmarkRunner.Run<SimdBenchmark>();
 
             //Console.WriteLine($"Run Time = {Measure(TestGenerateBasicMap, true)}"+ Environment.NewLine);
