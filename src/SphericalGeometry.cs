@@ -20,7 +20,6 @@ namespace simd
             }
 
             throw new NotImplementedException("Finish your shait!");
-            return zMultipliers;
         }
 
         private Vector3 GetRandomPointOnSurface(Random random)

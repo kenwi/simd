@@ -6,10 +6,9 @@ using SixLabors.ImageSharp.PixelFormats;
 class SIMD
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ExecuteOnSets(ref int[] a, ref int[] b, out int[] result, Func<Vector<int>, Vector<int>, Vector<int>> method)
+    public static void ExecuteOnSets(ref int[] a, ref int[] b, ref int[] result, Func<Vector<int>, Vector<int>, Vector<int>> method)
     {          
-        result = new int[a.Length];
-        for(int i=0; i<a.Length; i+=Vector<int>.Count)
+        for(int i=0; i<result.Length; i+=Vector<int>.Count)
         {
             var va = new Vector<int>(a, i);
             var vb = new Vector<int>(b, i);
@@ -18,9 +17,8 @@ class SIMD
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Add(ref int[] a, ref int[] b, out int[] result)
+    public static void Add(ref int[] a, ref int[] b, ref int[] result)
     {
-        result = new int[a.Length];
         for(int i=0; i<result.Length; i+=Vector<int>.Count)
         {
             var va = new Vector<int>(a, i);
@@ -30,9 +28,8 @@ class SIMD
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Multiply(ref int[] a, ref int[] b, out int[] result)
+    public static void Multiply(ref int[] a, ref int[] b, ref int[] result)
     {
-        result = new int[a.Length];
         for(int i=0; i<result.Length; i+=Vector<int>.Count)
         {
             var va = new Vector<int>(a, i);
