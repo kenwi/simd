@@ -9,7 +9,9 @@ Frequency=3914061 Hz, Resolution=255.4891 ns, Timer=TSC
 
 
 ```
-|    Method |       Mean |    Error |   StdDev |     Median |
-|---------- |-----------:|---------:|---------:|-----------:|
-|       Add |   464.3 us | 17.19 us | 49.60 us |   445.1 us |
-| AddNoSimd | 1,160.7 us | 18.74 us | 17.53 us | 1,155.6 us |
+|         Method |     Mean |     Error |    StdDev |
+|--------------- |---------:|----------:|----------:|
+|            Add | 1.377 ms | 0.0271 ms | 0.0226 ms |
+|      AddNoSimd | 3.018 ms | 0.0429 ms | 0.0380 ms |
+|       Multiply | 1.347 ms | 0.0190 ms | 0.0177 ms |
+| MultiplyNoSimd | 3.000 ms | 0.0251 ms | 0.0235 ms |

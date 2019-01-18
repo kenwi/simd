@@ -12,14 +12,7 @@ namespace simd
             {
                 zMultipliers[i] = GetRandomPointOnSurface(random);
             }
-
-            var z = new Raster(grid);
-            for(int i=0; i<zMultipliers.Length; i++)
-            {
-
-            }
-
-            throw new NotImplementedException("Finish your shait!");
+            return zMultipliers;
         }
 
         private Vector3 GetRandomPointOnSurface(Random random)
