@@ -1,0 +1,1 @@
+dotnet run -c Release -- --job short --runtimes clr core --filter *Benchmark*
