@@ -8,8 +8,8 @@ namespace simd
 {
     partial class Program
     {
-        static int width = 4096;
-        static int height = 2160;
+        static int width = 1920;
+        static int height = 1080;
 
         private static void CreateDirectoryIfNotExists(string directory)
         {
