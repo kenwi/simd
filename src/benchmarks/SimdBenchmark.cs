@@ -11,8 +11,7 @@ namespace simd
     public class SimdBenchmark
     {
         Random rnd;
-        int width;
-        int height;
+        int width, height;
         int[] a, b, c;
 
         [GlobalSetup]

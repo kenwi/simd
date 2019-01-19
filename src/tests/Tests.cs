@@ -8,9 +8,7 @@ namespace simd
 {
     partial class Program
     {
-        static int width = 1920;
-        static int height = 1080;
-
+        static int width = 1920, height = 1080;
         static Random rnd = new Random(Environment.TickCount);
         static FastNoise fn = new FastNoise(Environment.TickCount);
 
@@ -20,43 +18,12 @@ namespace simd
                 System.IO.Directory.CreateDirectory(directory);
         }
 
-        private static IEnumerable<Rgba32> GetRandomSet(int num)
-        {
-            var rnd = new Random();
-            return Enumerable.Repeat(0, num).Select(i => new Rgba32((byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255)));;
-        }
-
         private static void TestGetRandomSurfaceField()
         {
             var grid = new int[1000];
             var geometry = new SphericalGeometry();
             var zMultipliers = geometry.GetRandomSurfaceField(grid, rnd);
             Console.WriteLine($"[10] first values of [zMultipliers] = [{string.Join(", ", zMultipliers.Take(10))}]");
-        }
-
-        private static void TestExecuteOnSetsMethod()
-        {
-            int printNumberOfValues = 5, testNumberOfRuns = 5;
-            int[] result = null;
-            var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(1, 255)).ToArray();
-            var b = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(1, 255)).ToArray();
-            
-            Console.WriteLine($"[{printNumberOfValues}] first values of [a] = [{string.Join(", ", a.Take(printNumberOfValues))}]");
-            Console.WriteLine($"[{printNumberOfValues}] first values of [b] = [{string.Join(", ", b.Take(printNumberOfValues))}]");
-            for (int x = 0; x < testNumberOfRuns; x++)
-            {
-                var sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, ref result, (va, vb) => va + vb));
-                Console.WriteLine($"[+] [{sw}] [{printNumberOfValues}] first values of [result] = [{string.Join(", ", result.Take(printNumberOfValues))}]");
-
-                sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, ref result, (va, vb) => va - vb));
-                Console.WriteLine($"[-] [{sw}] [{printNumberOfValues}] first values of [result] = [{string.Join(", ", result.Take(printNumberOfValues))}]");
-                
-                sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, ref result, (va, vb) => va * vb));
-                Console.WriteLine($"[*] [{sw}] [{printNumberOfValues}] first values of [result] = [{string.Join(", ", result.Take(printNumberOfValues))}]");
-                
-                sw = Measure(() => SIMD.ExecuteOnSets(ref a, ref b, ref result, (va, vb) => va / vb));
-                Console.WriteLine($"[/] [{sw}] [{printNumberOfValues}] first values of [result] = [{string.Join(", ", result.Take(printNumberOfValues))}]");
-            }
         }
 
         private static void TestGenerateBasicMap()
@@ -134,7 +101,7 @@ namespace simd
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
 
             CreateDirectoryIfNotExists("./data");
-            Measure(() => ImageWriter.Write(ref buffer, $"./data/TestWrite-{time}.png", width, height), true);
+            ImageWriter.Write(ref buffer, $"./data/TestWrite-{time}.png", width, height);
         }
 
         private static void Test8KFastWrite()
@@ -143,47 +110,7 @@ namespace simd
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
 
             CreateDirectoryIfNotExists("./data");
-            Measure(() => ImageWriter.FastWrite(ref buffer, $"./data/Test8KFastWrite-{time}.png", width, height), true);
-        }
-
-        private static void TestCreateAndShowArray()
-        {
-            Console.WriteLine($"Creating dataset {width}x{height} = {width * height} pixels");
-            var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 255)).ToArray();
-            Console.WriteLine($"10 first values= [{string.Join(", ", a.Take(10))}]");
-        }
-
-        private static void TestAddMultiply()
-        {
-            int n = 5, runs = 5;
-            int[] result = new int[width*height];
-            var a = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
-            var b = Enumerable.Repeat(0, width * height).Select(i => rnd.Next(0, 20)).ToArray();
-            
-            Console.WriteLine("SIMD Addition/Multiplication");
-            Console.WriteLine($"[{n}] first values of [a] = [{string.Join(", ", a.Take(n))}]");
-            Console.WriteLine($"[{n}] first values of [b] = [{string.Join(", ", b.Take(n))}]");
-            for (int x = 0; x < runs; x++)
-            {
-                var sw = Measure(() => SIMD.Add(ref a, ref b, ref result));
-                Console.WriteLine($"[+] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
-
-                sw = Measure(() => SIMD.Multiply(ref a, ref b, ref result));
-                Console.WriteLine($"[*] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
-            }
-
-            Console.WriteLine();
-            Console.WriteLine("NoSIMD Addition/Multiplication");
-            Console.WriteLine($"[{n}] first values of [a] = [{string.Join(", ", a.Take(n))}]");
-            Console.WriteLine($"[{n}] first values of [b] = [{string.Join(", ", b.Take(n))}]");
-            for (int x = 0; x < runs; x++)
-            {
-                var sw = Measure(() => NoSIMD.Add(ref a, ref b, ref result));
-                Console.WriteLine($"[+] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
-
-                sw = Measure(() => NoSIMD.Multiply(ref a, ref b, ref result));
-                Console.WriteLine($"[*] [{sw}] [{n}] first values of [result] = [{string.Join(", ", result.Take(n))}]");
-            }
+            ImageWriter.FastWrite(ref buffer, $"./data/Test8KFastWrite-{time}.png", width, height);
         }
     }
 }

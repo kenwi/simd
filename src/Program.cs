@@ -15,6 +15,7 @@ namespace simd
 #if RELEASE
             var result = BenchmarkRunner.Run<SimdBenchmark>();
 #endif
+            
             Console.WriteLine($"Run Time = {Measure(TestGenerateBasicMap, true)}"+ Environment.NewLine);
             Console.WriteLine($"Run Time = {Measure(TestIntensityImage, true)}" + Environment.NewLine);
             Console.WriteLine($"Run Time = {Measure(TestFastWrite, true)}" + Environment.NewLine);
