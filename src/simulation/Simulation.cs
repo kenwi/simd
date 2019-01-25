@@ -58,42 +58,58 @@ namespace simd
 
     public class Simulation
     {
-        int width = 1024, height = 1024;
-        int numParticles = 16;
+        int width = 800, height = 600;
+        int numParticles = 10000;
         SimulationComputation computation;
         public float[] px, py;
         public float[] ax, ay;
         public float[] vx, vy;
         Rgba32[] canvas;
 
-        public Simulation()
+        public Simulation(int numParticles)
         {
+            this.numParticles = numParticles;
             Setup();
         }
 
         [GlobalSetup]
-        public void Setup()
+        private void Setup()
         {
-            computation = new SimulationComputation(numParticles);
             var rnd = new Random();
-            px = Enumerable.Repeat(0, numParticles).Select(i => (float)rnd.NextDouble()).ToArray();
-            py = new float[numParticles];
+            computation = new SimulationComputation(numParticles);
+            px = Enumerable.Repeat(0, numParticles).Select(i => (float)Math.Clamp(rnd.NextDouble(), -1, 1) * width).ToArray();
+            py = Enumerable.Repeat(0, numParticles).Select(i => (float)Math.Clamp(rnd.NextDouble(), -1, 1) * height).ToArray();
             ax = new float[numParticles];
             ay = Enumerable.Repeat(0, numParticles).Select(i => (float)rnd.NextDouble()).ToArray();
             vx = new float[numParticles];
-            vy = Enumerable.Repeat(0, numParticles).Select(i => (float)rnd.NextDouble()).ToArray();
-            canvas = new Rgba32[width * height];
-            var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
-            ImageWriter.FastWrite(ref canvas, $"./data/TestFastWrite-{time}.png", width, height);
+            vy = new float[numParticles];
         }
-        public void Step(float dt)
-        {            
-            computation.Simulate(dt, ref px, ref py, ref vx, ref vy, ref ax, ref ay);
-            computation.Simulate(dt, ref px, ref py, ref vx, ref vy, ref ax, ref ay);
-            computation.Simulate(dt, ref px, ref py, ref vx, ref vy, ref ax, ref ay);
-            computation.Simulate(dt, ref px, ref py, ref vx, ref vy, ref ax, ref ay);
-            computation.Simulate(dt, ref px, ref py, ref vx, ref vy, ref ax, ref ay);
-            computation.Simulate(dt, ref px, ref py, ref vx, ref vy, ref ax, ref ay);
+
+        public void Step(float dt, int numSteps)
+        {
+            for(int i=0; i<numSteps; i++)
+            {
+                canvas = new Rgba32[width * height];            
+                computation.Simulate(dt, ref px, ref py, ref vx, ref vy, ref ax, ref ay);
+                var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
+
+                UpdateCanvas(ref canvas, ref px, ref py);
+                ImageWriter.FastWrite(ref canvas, $"./data/Simulation-{time}-{i}.png", width, height);
+            }
+        }
+
+        public void UpdateCanvas(ref Rgba32[] canvas, ref float[] positionX, ref float[] positionY)
+        {
+            for(int i=0; i<numParticles; i++)
+            {
+                var x = (int)positionX[i];
+                var y = (int)positionY[i];
+                if(x < width && y < height)
+                {
+                    var index = ArrayIndex.From2DTo1D(x, y, width);
+                    canvas[index] = new Rgba32(1, 1, 1);
+                }
+            }
         }
     }
 }

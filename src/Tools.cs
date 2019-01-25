@@ -8,11 +8,11 @@ namespace simd
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int From2DTo1D(int x, int y, int width)
         {
-            return (x + width) * y;
+            return (width * y) + x;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2  From1DTo2D(int index, int width)
+        public static Vector2 From1DTo2D(int index, int width)
         {
             return new Vector2(index % width, index / width);
         }
