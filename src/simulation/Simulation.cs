@@ -89,12 +89,14 @@ namespace simd
         {
             for(int i=0; i<numSteps; i++)
             {
-                canvas = new Rgba32[width * height];            
+                canvas = new Rgba32[width * height];
+                for(int j=0; j<canvas.Length; j++)
+                    canvas[j].A = 255;
+
                 computation.Simulate(dt, ref px, ref py, ref vx, ref vy, ref ax, ref ay);
-                var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
 
                 UpdateCanvas(ref canvas, ref px, ref py);
-                ImageWriter.FastWrite(ref canvas, $"./data/Simulation-{time}-{i}.png", width, height);
+                ImageWriter.FastWrite(ref canvas, $"./data/Simulation-{i}.png", width, height);
             }
         }
 
@@ -107,7 +109,7 @@ namespace simd
                 if(x < width && y < height)
                 {
                     var index = ArrayIndex.From2DTo1D(x, y, width);
-                    canvas[index] = new Rgba32(1, 1, 1);
+                    canvas[index] = new Rgba32(255, 255, 255, 255);
                 }
             }
         }
