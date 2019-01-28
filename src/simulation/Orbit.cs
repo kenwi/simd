@@ -5,7 +5,10 @@ namespace simd
 {
     public class Orbit
     {
-        public static Vector2 Calculate(float angle, float a, float b, float theta, Vector2 p, float numPertubations, float pertubationAmplitude)
+        static double PC_TO_KM = 3.08567758129e13;
+        static double SEC_PER_YEAR = 365.25 * 86400;
+
+        public static void Calculate(float angle, float a, float b, float theta, ref float px, ref float py, float numPertubations, float pertubationAmplitude)
         {
             double beta = -angle,
                    alpha = theta * 2 * Math.PI;
@@ -15,19 +18,17 @@ namespace simd
                     cosbeta = Math.Cos(beta),
                     sinbeta = Math.Sin(beta);
 
-            var pos = new Vector2(p.X + (float)(a * cosalpha * cosbeta - b * sinalpha * sinbeta),
-                                    p.Y + (float)(a * cosalpha * sinbeta + b * sinalpha * cosbeta));
+            px = px + (float)(a * cosalpha * cosbeta - b * sinalpha * sinbeta);
+            py = py + (float)(a * cosalpha * sinbeta + b * sinalpha * cosbeta);
 
             if (pertubationAmplitude > 0 && numPertubations > 0)
             {
-                pos.X += (a / pertubationAmplitude) * (float)Math.Sin(alpha * 2 * numPertubations);
-                pos.Y += (a / pertubationAmplitude) * (float)Math.Cos(alpha * 2 * numPertubations);
+                px += (a / pertubationAmplitude) * (float)Math.Sin(alpha * 2 * numPertubations);
+                px += (a / pertubationAmplitude) * (float)Math.Cos(alpha * 2 * numPertubations);
             }
-            return pos;
         }
 
-        // TODO:
-        public float CalculateOrbitalVelocity(float radius)
+        public double CalculateOrbitalVelocity(float radius)
         {
             Func<double, double> MS = (r) =>
             {
@@ -51,7 +52,11 @@ namespace simd
                 return 20000 * Math.Sqrt(G * (MS(r) + MZ) / r);
             };
 
-            return 0;
+            double vel_kms = vd(radius);
+            double u = 2 * Math.PI * radius * PC_TO_KM;
+            double time = u / (vel_kms * SEC_PER_YEAR);
+
+            return 360.0 / time;
         }
     }
 }
