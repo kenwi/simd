@@ -8,7 +8,7 @@ namespace simd
         static double PC_TO_KM = 3.08567758129e13;
         static double SEC_PER_YEAR = 365.25 * 86400;
 
-        public static void Calculate(float angle, float a, float b, float theta, ref float px, ref float py, float numPertubations, float pertubationAmplitude)
+        public static void Calculate(float angle, float a, float b, float theta, ref float px, ref float py, float numPertubations = 0, float pertubationAmplitude = 0)
         {
             double beta = -angle,
                    alpha = theta * 2 * Math.PI;
@@ -21,14 +21,14 @@ namespace simd
             px = px + (float)(a * cosalpha * cosbeta - b * sinalpha * sinbeta);
             py = py + (float)(a * cosalpha * sinbeta + b * sinalpha * cosbeta);
 
-            if (pertubationAmplitude > 0 && numPertubations > 0)
+            /*if (pertubationAmplitude > 0 && numPertubations > 0)
             {
                 px += (a / pertubationAmplitude) * (float)Math.Sin(alpha * 2 * numPertubations);
                 px += (a / pertubationAmplitude) * (float)Math.Cos(alpha * 2 * numPertubations);
-            }
+            }*/
         }
 
-        public double CalculateOrbitalVelocity(float radius)
+        public static double CalculateOrbitalVelocity(double radius)
         {
             Func<double, double> MS = (r) =>
             {

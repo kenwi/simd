@@ -12,19 +12,13 @@ namespace simd
             if (!Vector.IsHardwareAccelerated)
                 throw new Exception("No hw acceleration available.");
 
-/*#if RELEASE
-            var result = BenchmarkRunner.Run<SimdBenchmark>();
-#endif
-*/
-            var simulation = new Simulation(10000);
-            simulation.Step(0.01f, 200);
-            
-            /*Console.WriteLine($"Run Time = {Measure(TestGenerateBasicMap, true)}"+ Environment.NewLine);
-            Console.WriteLine($"Run Time = {Measure(TestIntensityImage, true)}" + Environment.NewLine);
-            Console.WriteLine($"Run Time = {Measure(TestFastWrite, true)}" + Environment.NewLine);
-            Console.WriteLine($"Run Time = {Measure(TestWrite, true)}" + Environment.NewLine);
-            Console.WriteLine($"Run Time = {Measure(Test8KFastWrite, true)}" + Environment.NewLine);
-            Console.WriteLine($"Run Time = {Measure(Test1024x768Write, true)}" + Environment.NewLine);*/
+            int width = 1920, height = 1080;
+            var deltaTime = 0.00001f;
+            var timeSteps = 500;
+            var particles = new Particles(1000000);
+            var simulation = new GalaxySimulationComputation(ref particles, width, height);
+            simulation.InitializeParticles(width/30, height/30);
+            simulation.Run(deltaTime, timeSteps);
         }
     }
 }
