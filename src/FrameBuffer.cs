@@ -15,11 +15,11 @@ namespace simd
         {
             this.width = width;
             this.height = height;
+            frame = new Image<Rgba32>(width, height);
         }
 
         internal void MakeTestBuffer()
         {
-            frame = new Image<Rgba32>(width, height);
             for (int y = 0; y < frame.Height; y++)
             {
                 var row = frame.GetPixelRowSpan(y);
@@ -30,10 +30,22 @@ namespace simd
             }
         }
 
+        internal void SetPixels(Func<int, int, Rgba32> function)
+        {
+            for (int y = 0; y < frame.Height; y++)
+            {
+                var row = frame.GetPixelRowSpan(y);
+                for (int x = 0; x < frame.Width; x++)
+                {
+                    row[x] = function(x, y);
+                }
+            }
+        }
+
         internal void Write(string fileName)
         {
             ImageWriter.FastWrite(ref frame, fileName, width, height);
-            frame.Dispose();
+            frame = new Image<Rgba32>(width, height);
         }
     }
 }
