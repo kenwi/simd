@@ -14,7 +14,9 @@ namespace simd
             Func<Vector3, float, Vector3> add = (v, n) => new Vector3(v.X + n, v.Y + n, v.Z + n);
             Func<Vector3, Vector3> floor = v => new Vector3((float)Math.Floor(v.X), (float)Math.Floor(v.Y), (float)Math.Floor(v.Z));
             Func<Vector3, Vector3> fract = v => v - floor(v);
-            Func<Vector3, float> myRandomMagic = (n) => n.Length();
+
+            var fn = new FastNoise();
+            Func<Vector3, float> myRandomMagic = (n) => fn.GetValue(n.X, n.Y, n.Z);
 
             Vector3 p = floor(x);
             Vector3 w = fract(x);
@@ -40,9 +42,9 @@ namespace simd
             float k6 = a - b - e + f;
             float k7 = -a + b + c - d + e - f - g + h;
 
-            Vector3 v_c = multiply(du, 2.0f) * new Vector3(k1 + k4 * u.Y + k6 * u.Z + k7 * u.Y * u.Z, k2 + k5 * u.Z + k4 * u.X + k7 * u.Z * u.X, k3 + k6 * u.X + k5 * u.Z + k7 * u.X * u.Y);
-            float v_w = -1.0f + 2.0f * (k0 + k1 * u.X + k2 * u.Y + k3 * u.Z + k4 * u.X * u.Y + k5 * u.Y * u.Z + k6 * u.Z * u.X + k7 * u.X * u.Y * u.Z);
-            return new Vector4(v_c, v_w);
+            Vector3 derivatives = multiply(du, 2.0f) * new Vector3(k1 + k4 * u.Y + k6 * u.Z + k7 * u.Y * u.Z, k2 + k5 * u.Z + k4 * u.X + k7 * u.Z * u.X, k3 + k6 * u.X + k5 * u.Z + k7 * u.X * u.Y);
+            float noiseValue = -1.0f + 2.0f * (k0 + k1 * u.X + k2 * u.Y + k3 * u.Z + k4 * u.X * u.Y + k5 * u.Y * u.Z + k6 * u.Z * u.X + k7 * u.X * u.Y * u.Z);
+            return new Vector4(derivatives, noiseValue);
         }
     }
 
