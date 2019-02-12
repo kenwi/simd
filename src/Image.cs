@@ -6,6 +6,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 using Image = SixLabors.ImageSharp.Image;
+using System;
 
 namespace simd
 {
@@ -23,12 +24,25 @@ namespace simd
             image.Save(file);
         }
 
-        public static void FastWrite(ref Rgba32[] buffer, string file, int width, int height)
+        public static void FastWriteref(ref Rgba32[] buffer, string file, int width, int height)
         {
             using (var image = Image.LoadPixelData<Rgba32>(buffer, width, height))
             {
                 image.Save(file);
             }
+        }
+
+        public static void FastWrite(Span<Rgba32> buffer, string file, int width, int height)
+        {
+            using (var image = Image.LoadPixelData<Rgba32>(buffer, width, height))
+            {
+                image.Save(file);
+            }
+        }
+
+        public static void FastWrite(ref Image<Rgba32> buffer, string file, int width, int height)
+        {
+            buffer.Save(file);
         }
     }
 }
