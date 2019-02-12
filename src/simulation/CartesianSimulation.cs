@@ -47,7 +47,7 @@ namespace simd
                 computation.Simulate(dt, ref px, ref py, ref vx, ref vy, ref ax, ref ay);
 
                 UpdateCanvas(ref canvas, ref px, ref py);
-                ImageWriter.FastWrite(ref canvas, $"./data/Simulation-{i}.png", width, height);
+                //ImageWriter.FastWrite(ref canvas, $"./data/Simulation-{i}.png", width, height);
             }
         }
 

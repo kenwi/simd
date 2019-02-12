@@ -20,10 +20,10 @@ namespace simd
 
         private static void TestGetRandomSurfaceField()
         {
-            var grid = new int[1000];
+            /*var grid = new int[1000];
             var geometry = new SphericalGeometry();
             var zMultipliers = geometry.GetRandomSurfaceField(grid, rnd);
-            Console.WriteLine($"[10] first values of [zMultipliers] = [{string.Join(", ", zMultipliers.Take(10))}]");
+            Console.WriteLine($"[10] first values of [zMultipliers] = [{string.Join(", ", zMultipliers.Take(10))}]");*/
         }
 
         private static void TestGenerateBasicMap()
@@ -47,7 +47,7 @@ namespace simd
 
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
             CreateDirectoryIfNotExists("./data");
-            ImageWriter.FastWrite(ref buffer, $"./data/TestGenerateBasicMap-{time}.png", width, height);
+            //ImageWriter.FastWrite(ref buffer, $"./data/TestGenerateBasicMap-{time}.png", width, height);
         }
 
         private static void TestIntensityImage()
@@ -74,7 +74,7 @@ namespace simd
 
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
             CreateDirectoryIfNotExists("./data");
-            ImageWriter.FastWrite(ref buffer, $"./data/TestIntensityImage-{time}.png", width, height);
+           // ImageWriter.FastWrite(ref buffer, $"./data/TestIntensityImage-{time}.png", width, height);
         }
 
         private static void Test1024x768Write()
@@ -92,7 +92,7 @@ namespace simd
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
 
             CreateDirectoryIfNotExists("./data");
-            ImageWriter.FastWrite(ref buffer, $"./data/TestFastWrite-{time}.png", width, height);
+          //  ImageWriter.FastWrite(ref buffer, $"./data/TestFastWrite-{time}.png", width, height);
         }
 
         private static void TestWrite()
@@ -110,7 +110,7 @@ namespace simd
             var time = DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture).Replace(":", "-");
 
             CreateDirectoryIfNotExists("./data");
-            ImageWriter.FastWrite(ref buffer, $"./data/Test8KFastWrite-{time}.png", width, height);
+           // ImageWriter.FastWrite(ref buffer, $"./data/Test8KFastWrite-{time}.png", width, height);
         }
     }
 }
