@@ -6,6 +6,8 @@ namespace simd
 {
     public static class Noise
     {
+        static FastNoise fn = new FastNoise();
+        
         // http://www.iquilezles.org/www/articles/morenoise/morenoise.htm
         public static Vector4 noised(Vector3 x)
         {
@@ -15,7 +17,6 @@ namespace simd
             Func<Vector3, Vector3> floor = v => new Vector3((float)Math.Floor(v.X), (float)Math.Floor(v.Y), (float)Math.Floor(v.Z));
             Func<Vector3, Vector3> fract = v => v - floor(v);
 
-            var fn = new FastNoise();
             Func<Vector3, float> myRandomMagic = (n) => fn.GetValue(n.X, n.Y, n.Z);
 
             Vector3 p = floor(x);
