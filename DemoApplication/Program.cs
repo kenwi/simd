@@ -19,7 +19,7 @@ namespace DemoApplication
             GraphicsBackend backend = VeldridStartup.GetPlatformDefaultBackend();
             
             VeldridStartup.CreateWindowAndGraphicsDevice(
-                 new WindowCreateInfo(100, 100, (int)(width * viewScale), (int)(height * viewScale), WindowState.Normal, "Veldrid Ray Tracer"),
+                 new WindowCreateInfo(100, 100, (int)(width * viewScale), (int)(height * viewScale), WindowState.Normal, ""),
                  new GraphicsDeviceOptions(debug: false, swapchainDepthFormat: null, syncToVerticalBlank: false),
                  backend,
                  out window,
