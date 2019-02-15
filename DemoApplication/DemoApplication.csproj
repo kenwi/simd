@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\Engine\Engine.csproj" />
+    <ProjectReference Include="..\Engine\Engine.csproj"/>
   </ItemGroup>
-
+  <ItemGroup>
+    <PackageReference Include="Veldrid.StartupUtilities" Version="4.5.0"/>
+  </ItemGroup>
 </Project>
