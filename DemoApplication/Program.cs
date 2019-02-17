@@ -4,6 +4,7 @@ using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
 using Veldrid.SPIRV;
+using System;
 
 namespace DemoApplication
 {
@@ -54,33 +55,22 @@ namespace DemoApplication
             return graphicsDevice;
         }
 
-        protected override void CreateResources()
+        private Shader[] createShaders()
         {
-            var factory = GraphicsDevice.ResourceFactory;
-            VertexPositionColor[] quadVertices =
-            {
-                new VertexPositionColor(new Vector2(-.75f, .75f), RgbaFloat.Red),
-                new VertexPositionColor(new Vector2(.75f, .75f), RgbaFloat.Green),
-                new VertexPositionColor(new Vector2(-.75f, -.75f), RgbaFloat.Blue),
-                new VertexPositionColor(new Vector2(.75f, -.75f), RgbaFloat.Yellow)
-            };
-
-            ushort[] quadIndices = { 0, 1, 2, 3 };
-
-            vertexBuffer = factory.CreateBuffer(new BufferDescription(4 * VertexPositionColor.SizeInBytes, BufferUsage.VertexBuffer));
-            indexBuffer = factory.CreateBuffer(new BufferDescription(4 * sizeof(ushort), BufferUsage.IndexBuffer));
-
-            GraphicsDevice.UpdateBuffer(vertexBuffer, 0, quadVertices);
-            GraphicsDevice.UpdateBuffer(indexBuffer, 0, quadIndices);
-
-            var vertexElementDescriptionPosition = new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2);
-            var vertexElementDescriptionColor = new VertexElementDescription("Color", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float4);
-            var vertexLayout = new VertexLayoutDescription(vertexElementDescriptionPosition, vertexElementDescriptionColor);
-
             ShaderDescription vertexShaderDesc = new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(DemoShaders.VertexCode), "main");
             ShaderDescription fragmentShaderDesc = new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(DemoShaders.FragmentCode), "main");
-            shaders = factory.CreateFromSpirv(vertexShaderDesc, fragmentShaderDesc);
+            return GraphicsDevice.ResourceFactory.CreateFromSpirv(vertexShaderDesc, fragmentShaderDesc);
+        }
 
+        private VertexLayoutDescription createVertexLayout()
+        {
+            var vertexElementDescriptionPosition = new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2);
+            var vertexElementDescriptionColor = new VertexElementDescription("Color", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float4);
+            return new VertexLayoutDescription(vertexElementDescriptionPosition, vertexElementDescriptionColor);
+        }
+        
+        private Pipeline createPipeline(VertexLayoutDescription vertexLayout)
+        {
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription();
             pipelineDescription.BlendState = BlendStateDescription.SingleOverrideBlend;
 
@@ -100,8 +90,28 @@ namespace DemoApplication
             pipelineDescription.ResourceLayouts = System.Array.Empty<ResourceLayout>();
             pipelineDescription.ShaderSet = new ShaderSetDescription( vertexLayouts: new VertexLayoutDescription[] { vertexLayout }, shaders: shaders);
             pipelineDescription.Outputs = GraphicsDevice.SwapchainFramebuffer.OutputDescription;
-            pipeline = factory.CreateGraphicsPipeline(pipelineDescription);
+            return GraphicsDevice.ResourceFactory.CreateGraphicsPipeline(pipelineDescription);
+        }
 
+        protected override void CreateResources()
+        {
+            var factory = GraphicsDevice.ResourceFactory;
+            VertexPositionColor[] quadVertices = {
+                new VertexPositionColor(new Vector2(-.75f, .75f), RgbaFloat.Red),
+                new VertexPositionColor(new Vector2(.75f, .75f), RgbaFloat.Green),
+                new VertexPositionColor(new Vector2(-.75f, -.75f), RgbaFloat.Blue),
+                new VertexPositionColor(new Vector2(.75f, -.75f), RgbaFloat.Yellow)
+            };
+            ushort[] quadIndices = { 0, 1, 2, 3 };
+
+            vertexBuffer = factory.CreateBuffer(new BufferDescription(4 * VertexPositionColor.SizeInBytes, BufferUsage.VertexBuffer));
+            indexBuffer = factory.CreateBuffer(new BufferDescription(4 * sizeof(ushort), BufferUsage.IndexBuffer));
+            GraphicsDevice.UpdateBuffer(vertexBuffer, 0, quadVertices);
+            GraphicsDevice.UpdateBuffer(indexBuffer, 0, quadIndices);
+
+            shaders = createShaders();
+            var vertexLayout = createVertexLayout();
+            pipeline = createPipeline(vertexLayout);
             commandList = factory.CreateCommandList();
         }
 
