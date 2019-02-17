@@ -11,11 +11,14 @@ namespace Engine
         public Framebuffer FrameBuffer => GraphicsDevice.SwapchainFramebuffer;
         
         protected abstract GraphicsDevice CreateGraphicsDevice();
+        protected abstract void Update(float dt);
+        protected abstract void CreateResources();
 
         public void Run()
         {
             IsRunning = true;
             GraphicsDevice = CreateGraphicsDevice();
+            CreateResources();
 
             const float dt = 0.1f;
             while(IsRunning)
@@ -32,11 +35,6 @@ namespace Engine
             GraphicsDevice.WaitForIdle();
         }
 
-        protected virtual void Update(float dt)
-        {
-            
-        }
-
         public void Exit()
         {
             Console.WriteLine("Exiting");
@@ -45,7 +43,7 @@ namespace Engine
 
         public virtual void Dispose()
         {
-            Console.WriteLine("Disposing");
+            Console.WriteLine("Disposing GraphicsDevice");
             GraphicsDevice.Dispose();
         }
     }

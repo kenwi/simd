@@ -1,9 +1,24 @@
-﻿using Veldrid;
+﻿using System.Numerics;
+using System.Text;
+using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
+using Veldrid.SPIRV;
 
 namespace DemoApplication
 {
+    struct VertexPositionColor
+    {
+        public Vector2 Position;
+        public RgbaFloat Color;
+        public VertexPositionColor(Vector2 position, RgbaFloat color)
+        {
+            Position = position;
+            Color = color;
+        }
+        public const uint SizeInBytes = 24;
+    }
+
     public sealed class Demo : Engine.Application
     {
         static void Main() => Demo.Instance.Run();
@@ -13,27 +28,105 @@ namespace DemoApplication
         uint width = 1024, height = 768, viewScale = 1, totalFrames = 0;
         Sdl2Window window;
         CommandList commandList;
+        DeviceBuffer vertexBuffer, indexBuffer;
+        Shader[] shaders;
+        Pipeline pipeline;
 
+        private const string VertexCode = @"
+#version 450
+
+layout(location = 0) in vec2 Position;
+layout(location = 1) in vec4 Color;
+
+layout(location = 0) out vec4 fsin_Color;
+
+void main()
+{
+    gl_Position = vec4(Position, 0, 1);
+    fsin_Color = Color;
+}";
+
+        private const string FragmentCode = @"
+#version 450
+
+layout(location = 0) in vec4 fsin_Color;
+layout(location = 0) out vec4 fsout_Color;
+
+void main()
+{
+    fsout_Color = fsin_Color;
+}";
         protected override GraphicsDevice CreateGraphicsDevice()
         {
             GraphicsDevice graphicsDevice;
             GraphicsBackend backend = VeldridStartup.GetPlatformDefaultBackend();
-            
+
             VeldridStartup.CreateWindowAndGraphicsDevice(
                  new WindowCreateInfo(100, 100, (int)(width * viewScale), (int)(height * viewScale), WindowState.Normal, ""),
                  new GraphicsDeviceOptions(debug: false, swapchainDepthFormat: null, syncToVerticalBlank: false),
                  backend,
                  out window,
                  out graphicsDevice);
-            commandList = graphicsDevice.ResourceFactory.CreateCommandList();
             window.CursorVisible = true;
             window.Closing += Exit;
             window.Closed += Dispose;
-            window.Resized += () => {
+            window.Resized += () =>
+            {
                 width = (uint)window.Width * viewScale;
                 height = (uint)window.Height * viewScale;
             };
             return graphicsDevice;
+        }
+
+        protected override void CreateResources()
+        {
+            var factory = GraphicsDevice.ResourceFactory;
+            VertexPositionColor[] quadVertices =
+            {
+                new VertexPositionColor(new Vector2(-.75f, .75f), RgbaFloat.Red),
+                new VertexPositionColor(new Vector2(.75f, .75f), RgbaFloat.Green),
+                new VertexPositionColor(new Vector2(-.75f, -.75f), RgbaFloat.Blue),
+                new VertexPositionColor(new Vector2(.75f, -.75f), RgbaFloat.Yellow)
+            };
+
+            ushort[] quadIndices = { 0, 1, 2, 3 };
+
+            vertexBuffer = factory.CreateBuffer(new BufferDescription(4 * VertexPositionColor.SizeInBytes, BufferUsage.VertexBuffer));
+            indexBuffer = factory.CreateBuffer(new BufferDescription(4 * sizeof(ushort), BufferUsage.IndexBuffer));
+
+            GraphicsDevice.UpdateBuffer(vertexBuffer, 0, quadVertices);
+            GraphicsDevice.UpdateBuffer(indexBuffer, 0, quadIndices);
+
+            var vertexElementDescriptionPosition = new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2);
+            var vertexElementDescriptionColor = new VertexElementDescription("Color", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float4);
+            var vertexLayout = new VertexLayoutDescription(vertexElementDescriptionPosition, vertexElementDescriptionColor);
+
+            ShaderDescription vertexShaderDesc = new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(VertexCode), "main");
+            ShaderDescription fragmentShaderDesc = new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(FragmentCode), "main");
+            shaders = factory.CreateFromSpirv(vertexShaderDesc, fragmentShaderDesc);
+
+            GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription();
+            pipelineDescription.BlendState = BlendStateDescription.SingleOverrideBlend;
+
+            pipelineDescription.DepthStencilState = new DepthStencilStateDescription(
+                depthTestEnabled: true, 
+                depthWriteEnabled: true, 
+                comparisonKind: ComparisonKind.LessEqual);
+
+            pipelineDescription.RasterizerState = new RasterizerStateDescription(
+                cullMode: FaceCullMode.Back,
+                fillMode: PolygonFillMode.Solid,
+                frontFace: FrontFace.Clockwise,
+                depthClipEnabled: true,
+                scissorTestEnabled: false);
+            
+            pipelineDescription.PrimitiveTopology = PrimitiveTopology.TriangleStrip;
+            pipelineDescription.ResourceLayouts = System.Array.Empty<ResourceLayout>();
+            pipelineDescription.ShaderSet = new ShaderSetDescription( vertexLayouts: new VertexLayoutDescription[] { vertexLayout }, shaders: shaders);
+            pipelineDescription.Outputs = GraphicsDevice.SwapchainFramebuffer.OutputDescription;
+            pipeline = factory.CreateGraphicsPipeline(pipelineDescription);
+
+            commandList = factory.CreateCommandList();
         }
 
         protected override void Render(float dt)
@@ -41,7 +134,17 @@ namespace DemoApplication
             var cl = commandList as CommandList;
             cl.Begin();
             cl.SetFramebuffer(GraphicsDevice.MainSwapchain.Framebuffer);
-            //cl.Draw(3);
+            cl.ClearColorTarget(0, RgbaFloat.Black);
+            cl.SetVertexBuffer(0, vertexBuffer);
+            cl.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
+            cl.SetPipeline(pipeline);
+            cl.DrawIndexed(
+                indexCount: 4,
+                instanceCount: 1,
+                indexStart: 0,
+                vertexOffset: 0,
+                instanceStart: 0
+            );
             cl.End();
             GraphicsDevice.SubmitCommands(cl);
             base.Render(dt);
@@ -49,19 +152,21 @@ namespace DemoApplication
 
         protected override void Update(float dt)
         {
-            if(!window.Exists)
+            if (!window.Exists)
             {
                 Exit();
                 return;
             }
             var input = window.PumpEvents();
             window.Title = $"Numframes: {++totalFrames}, Width: {width}, Height: {height}";
-            base.Update(dt);
         }
 
         public override void Dispose()
         {
             commandList?.Dispose();
+            pipeline?.Dispose();
+            vertexBuffer?.Dispose();
+            indexBuffer?.Dispose();
             base.Dispose();
         }
     }
