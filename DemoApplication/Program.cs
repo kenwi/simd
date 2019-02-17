@@ -10,11 +10,9 @@ namespace DemoApplication
         static Demo Instance => _instance;
         static readonly Demo _instance = new Demo();
 
-        uint width = 1024, height = 768, viewScale = 1;
+        uint width = 1024, height = 768, viewScale = 1, totalFrames = 0;
         Sdl2Window window;
         CommandList commandList;
-
-        uint totalFrames = 0;
 
         protected override GraphicsDevice CreateGraphicsDevice()
         {
@@ -27,16 +25,25 @@ namespace DemoApplication
                  backend,
                  out window,
                  out graphicsDevice);
-
+            commandList = graphicsDevice.ResourceFactory.CreateCommandList();
             window.CursorVisible = true;
             window.Closing += Exit;
             window.Closed += Dispose;
-
+            window.Resized += () => {
+                width = (uint)window.Width * viewScale;
+                height = (uint)window.Height * viewScale;
+            };
             return graphicsDevice;
         }
 
         protected override void Render(float dt)
         {
+            var cl = commandList as CommandList;
+            cl.Begin();
+            cl.SetFramebuffer(GraphicsDevice.MainSwapchain.Framebuffer);
+            //cl.Draw(3);
+            cl.End();
+            GraphicsDevice.SubmitCommands(cl);
             base.Render(dt);
         }
 
@@ -48,7 +55,7 @@ namespace DemoApplication
                 return;
             }
             var input = window.PumpEvents();
-            window.Title = $"Numframes: {++totalFrames}";
+            window.Title = $"Numframes: {++totalFrames}, Width: {width}, Height: {height}";
             base.Update(dt);
         }
 

@@ -8,6 +8,8 @@ namespace Engine
     {
         public bool IsRunning { get; private set; }
         public GraphicsDevice GraphicsDevice { get; private set; }
+        public Framebuffer FrameBuffer => GraphicsDevice.SwapchainFramebuffer;
+        
         protected abstract GraphicsDevice CreateGraphicsDevice();
 
         public void Run()
