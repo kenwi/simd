@@ -7,7 +7,7 @@ using Veldrid.SPIRV;
 
 namespace DemoApplication
 {
-    struct VertexPositionColor
+     struct VertexPositionColor
     {
         public Vector2 Position;
         public RgbaFloat Color;
@@ -32,30 +32,6 @@ namespace DemoApplication
         Shader[] shaders;
         Pipeline pipeline;
 
-        private const string VertexCode = @"
-#version 450
-
-layout(location = 0) in vec2 Position;
-layout(location = 1) in vec4 Color;
-
-layout(location = 0) out vec4 fsin_Color;
-
-void main()
-{
-    gl_Position = vec4(Position, 0, 1);
-    fsin_Color = Color;
-}";
-
-        private const string FragmentCode = @"
-#version 450
-
-layout(location = 0) in vec4 fsin_Color;
-layout(location = 0) out vec4 fsout_Color;
-
-void main()
-{
-    fsout_Color = fsin_Color;
-}";
         protected override GraphicsDevice CreateGraphicsDevice()
         {
             GraphicsDevice graphicsDevice;
@@ -101,8 +77,8 @@ void main()
             var vertexElementDescriptionColor = new VertexElementDescription("Color", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float4);
             var vertexLayout = new VertexLayoutDescription(vertexElementDescriptionPosition, vertexElementDescriptionColor);
 
-            ShaderDescription vertexShaderDesc = new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(VertexCode), "main");
-            ShaderDescription fragmentShaderDesc = new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(FragmentCode), "main");
+            ShaderDescription vertexShaderDesc = new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(DemoShaders.VertexCode), "main");
+            ShaderDescription fragmentShaderDesc = new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(DemoShaders.FragmentCode), "main");
             shaders = factory.CreateFromSpirv(vertexShaderDesc, fragmentShaderDesc);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription();
