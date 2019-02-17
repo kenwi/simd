@@ -4,7 +4,7 @@ using Veldrid;
 
 namespace Engine
 {
-    public abstract class Application
+    public abstract class Application : IDisposable
     {
         public bool IsRunning { get; private set; }
         public GraphicsDevice GraphicsDevice { get; private set; }
@@ -19,19 +19,32 @@ namespace Engine
             while(IsRunning)
             {
                 Update(dt);
-                Render(dt);
+                if (IsRunning)
+                    Render(dt);
             }
         }
 
-        private void Render(float dt)
+        protected virtual void Render(float dt)
         {
             GraphicsDevice.SwapBuffers();
             GraphicsDevice.WaitForIdle();
         }
 
-        private void Update(float dt)
+        protected virtual void Update(float dt)
         {
+            Console.WriteLine("Application Update");
+        }
 
+        public void Exit()
+        {
+            Console.WriteLine("Exiting");
+            IsRunning = false;
+        }
+
+        public virtual void Dispose()
+        {
+            Console.WriteLine("Disposing");
+            GraphicsDevice.Dispose();
         }
     }
 }

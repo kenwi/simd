@@ -25,7 +25,18 @@ namespace DemoApplication
                  out window,
                  out graphicsDevice);
 
+            window.CursorVisible = true;
+            window.Closing += Exit;
+            window.Closed += Dispose;
+
             return graphicsDevice;
+        }
+
+        protected override void Update(float dt)
+        {
+            System.Console.WriteLine("Demo Update");
+            var input = window.PumpEvents();
+            base.Update(dt);
         }
     }
 }
