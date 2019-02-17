@@ -32,7 +32,7 @@ namespace Engine
 
         protected virtual void Update(float dt)
         {
-            Console.WriteLine("Application Update");
+            
         }
 
         public void Exit()

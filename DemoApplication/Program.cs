@@ -12,6 +12,9 @@ namespace DemoApplication
 
         uint width = 1024, height = 768, viewScale = 1;
         Sdl2Window window;
+        CommandList commandList;
+
+        uint totalFrames = 0;
 
         protected override GraphicsDevice CreateGraphicsDevice()
         {
@@ -32,11 +35,27 @@ namespace DemoApplication
             return graphicsDevice;
         }
 
+        protected override void Render(float dt)
+        {
+            base.Render(dt);
+        }
+
         protected override void Update(float dt)
         {
-            System.Console.WriteLine("Demo Update");
+            if(!window.Exists)
+            {
+                Exit();
+                return;
+            }
             var input = window.PumpEvents();
+            window.Title = $"Numframes: {++totalFrames}";
             base.Update(dt);
+        }
+
+        public override void Dispose()
+        {
+            commandList?.Dispose();
+            base.Dispose();
         }
     }
 }
