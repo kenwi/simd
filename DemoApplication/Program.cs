@@ -34,6 +34,12 @@ namespace DemoApplication
         Shader[] shaders;
         Pipeline pipeline;
 
+        public Demo(bool LimitFrameRate = true) 
+            : base(LimitFrameRate)
+        {
+
+        }
+
         protected override GraphicsDevice CreateGraphicsDevice()
         {
             GraphicsDevice graphicsDevice;
@@ -150,7 +156,7 @@ namespace DemoApplication
                 if (input.KeyCharPresses.Contains('l'))
                 {
                     LimitFrameRate = !LimitFrameRate;
-                    Console.WriteLine($"Toggle LimitFramerate: {LimitFrameRate}");
+                    Console.WriteLine($"LimitFramerate: {LimitFrameRate}");
                 }
                 if(input.KeyCharPresses.Contains('q'))
                 {

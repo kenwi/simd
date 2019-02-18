@@ -19,16 +19,20 @@ namespace Engine
         protected GameTime gameTime;
         private readonly FrameTimeAverager frameTimeAverager = new FrameTimeAverager(0.666);
         private TimeSpan TotalElapsedTime => gameTime?.TotalGameTime ?? TimeSpan.Zero;
+        
+        public Application(bool LimitFrameRate = false)
+        {
+            this.LimitFrameRate = LimitFrameRate;
+        }
+        
         public void Run()
         {
             IsRunning = true;
-            LimitFrameRate = false;
             GraphicsDevice = CreateGraphicsDevice();
             CreateResources();
 
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-
             while(IsRunning)
             {
                 gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
