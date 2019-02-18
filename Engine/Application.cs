@@ -12,6 +12,7 @@ namespace Engine
         public double DesiredFrameLengthSeconds => 1.0 / 60.0;
         public double FramesPerSecond => Math.Round(frameTimeAverager.CurrentAverageFramesPerSecond);
         public int TotalFrames => frameTimeAverager.TotalFrames;
+        public bool LimitFrameRate {get; set;}
         protected abstract GraphicsDevice CreateGraphicsDevice();
         protected abstract void Update(double dt);
         protected abstract void CreateResources();
@@ -21,6 +22,7 @@ namespace Engine
         public void Run()
         {
             IsRunning = true;
+            LimitFrameRate = false;
             GraphicsDevice = CreateGraphicsDevice();
             CreateResources();
 
@@ -33,7 +35,7 @@ namespace Engine
                 var dt = gameTime.ElapsedGameTime.TotalSeconds;
                 stopWatch.Restart();
 
-                while(dt < DesiredFrameLengthSeconds)
+                while(LimitFrameRate && dt < DesiredFrameLengthSeconds)
                 {
                     var elapsed = stopWatch.Elapsed;
                     gameTime = new GameTime(TotalElapsedTime + elapsed, gameTime.ElapsedGameTime + elapsed);

@@ -5,10 +5,11 @@ using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
 using Veldrid.SPIRV;
 using System;
+using System.Linq;
 
 namespace DemoApplication
 {
-     struct VertexPositionColor
+    struct VertexPositionColor
     {
         public Vector2 Position;
         public RgbaFloat Color;
@@ -68,15 +69,15 @@ namespace DemoApplication
             var vertexElementDescriptionColor = new VertexElementDescription("Color", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float4);
             return new VertexLayoutDescription(vertexElementDescriptionPosition, vertexElementDescriptionColor);
         }
-        
+
         private Pipeline createPipeline(VertexLayoutDescription vertexLayout)
         {
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription();
             pipelineDescription.BlendState = BlendStateDescription.SingleOverrideBlend;
 
             pipelineDescription.DepthStencilState = new DepthStencilStateDescription(
-                depthTestEnabled: true, 
-                depthWriteEnabled: true, 
+                depthTestEnabled: true,
+                depthWriteEnabled: true,
                 comparisonKind: ComparisonKind.LessEqual);
 
             pipelineDescription.RasterizerState = new RasterizerStateDescription(
@@ -85,10 +86,10 @@ namespace DemoApplication
                 frontFace: FrontFace.Clockwise,
                 depthClipEnabled: true,
                 scissorTestEnabled: false);
-            
+
             pipelineDescription.PrimitiveTopology = PrimitiveTopology.TriangleStrip;
             pipelineDescription.ResourceLayouts = System.Array.Empty<ResourceLayout>();
-            pipelineDescription.ShaderSet = new ShaderSetDescription( vertexLayouts: new VertexLayoutDescription[] { vertexLayout }, shaders: shaders);
+            pipelineDescription.ShaderSet = new ShaderSetDescription(vertexLayouts: new VertexLayoutDescription[] { vertexLayout }, shaders: shaders);
             pipelineDescription.Outputs = GraphicsDevice.SwapchainFramebuffer.OutputDescription;
             return GraphicsDevice.ResourceFactory.CreateGraphicsPipeline(pipelineDescription);
         }
@@ -144,9 +145,21 @@ namespace DemoApplication
                 return;
             }
             var input = window.PumpEvents();
+            if (input.KeyEvents.Count > 0)
+            {
+                if (input.KeyCharPresses.Contains('l'))
+                {
+                    LimitFrameRate = !LimitFrameRate;
+                    Console.WriteLine($"Toggle LimitFramerate: {LimitFrameRate}");
+                }
+                if(input.KeyCharPresses.Contains('q'))
+                {
+                    Exit();
+                }
+            }
 
             var frameTime = gameTime.ElapsedGameTime.Milliseconds;
-            window.Title = $"FrameTime: {frameTime}, Fps: {FramesPerSecond}, TotalFrames: {TotalFrames}, Width: {width}, Height: {height}";
+            window.Title = $"FrameTime: {frameTime} ms, Fps: {FramesPerSecond}, TotalFrames: {TotalFrames}, Width: {width}, Height: {height}";
         }
 
         public override void Dispose()
