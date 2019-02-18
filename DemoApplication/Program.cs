@@ -26,7 +26,7 @@ namespace DemoApplication
         static Demo Instance => _instance;
         static readonly Demo _instance = new Demo();
 
-        uint width = 1024, height = 768, viewScale = 1, totalFrames = 0;
+        uint width = 1024, height = 768, viewScale = 1;
         Sdl2Window window;
         CommandList commandList;
         DeviceBuffer vertexBuffer, indexBuffer;
@@ -115,7 +115,7 @@ namespace DemoApplication
             commandList = factory.CreateCommandList();
         }
 
-        protected override void Render(float dt)
+        protected override void Render(double dt)
         {
             var cl = commandList as CommandList;
             cl.Begin();
@@ -136,7 +136,7 @@ namespace DemoApplication
             base.Render(dt);
         }
 
-        protected override void Update(float dt)
+        protected override void Update(double dt)
         {
             if (!window.Exists)
             {
@@ -144,7 +144,9 @@ namespace DemoApplication
                 return;
             }
             var input = window.PumpEvents();
-            window.Title = $"Numframes: {++totalFrames}, Width: {width}, Height: {height}";
+
+            var frameTime = gameTime.ElapsedGameTime.Milliseconds;
+            window.Title = $"FrameTime: {frameTime}, Fps: {FramesPerSecond}, TotalFrames: {TotalFrames}, Width: {width}, Height: {height}";
         }
 
         public override void Dispose()

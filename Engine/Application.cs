@@ -9,27 +9,50 @@ namespace Engine
         public bool IsRunning { get; private set; }
         public GraphicsDevice GraphicsDevice { get; private set; }
         public Framebuffer FrameBuffer => GraphicsDevice.SwapchainFramebuffer;
-        
+        public double DesiredFrameLengthSeconds => 1.0 / 60.0;
+        public double FramesPerSecond => Math.Round(frameTimeAverager.CurrentAverageFramesPerSecond);
+        public int TotalFrames => frameTimeAverager.TotalFrames;
         protected abstract GraphicsDevice CreateGraphicsDevice();
-        protected abstract void Update(float dt);
+        protected abstract void Update(double dt);
         protected abstract void CreateResources();
-
+        protected GameTime gameTime;
+        private readonly FrameTimeAverager frameTimeAverager = new FrameTimeAverager(0.666);
+        private TimeSpan TotalElapsedTime => gameTime?.TotalGameTime ?? TimeSpan.Zero;
         public void Run()
         {
             IsRunning = true;
             GraphicsDevice = CreateGraphicsDevice();
             CreateResources();
 
-            const float dt = 0.1f;
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
             while(IsRunning)
             {
+                gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
+                var dt = gameTime.ElapsedGameTime.TotalSeconds;
+                stopWatch.Restart();
+
+                while(dt < DesiredFrameLengthSeconds)
+                {
+                    var elapsed = stopWatch.Elapsed;
+                    gameTime = new GameTime(TotalElapsedTime + elapsed, gameTime.ElapsedGameTime + elapsed);
+                    dt += elapsed.TotalSeconds;
+                    stopWatch.Restart();
+                }
+
+                if(dt > DesiredFrameLengthSeconds * 1.25)
+                    gameTime = GameTime.RunningSlowly(gameTime);
+
+                frameTimeAverager.AddTime(dt);
+
                 Update(dt);
                 if (IsRunning)
                     Render(dt);
             }
         }
 
-        protected virtual void Render(float dt)
+        protected virtual void Render(double dt)
         {
             GraphicsDevice.SwapBuffers();
             GraphicsDevice.WaitForIdle();
