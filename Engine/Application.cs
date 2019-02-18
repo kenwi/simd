@@ -7,16 +7,19 @@ namespace Engine
     public abstract class Application : IDisposable
     {
         public bool IsRunning { get; private set; }
+        public bool LimitFrameRate { get; protected set; }
         public GraphicsDevice GraphicsDevice { get; private set; }
+        
         public Framebuffer FrameBuffer => GraphicsDevice.SwapchainFramebuffer;
         public double DesiredFrameLengthSeconds => 1.0 / 60.0;
         public double FramesPerSecond => Math.Round(frameTimeAverager.CurrentAverageFramesPerSecond);
         public int TotalFrames => frameTimeAverager.TotalFrames;
-        public bool LimitFrameRate {get; set;}
+
         protected abstract GraphicsDevice CreateGraphicsDevice();
         protected abstract void Update(double dt);
         protected abstract void CreateResources();
         protected GameTime gameTime;
+        
         private readonly FrameTimeAverager frameTimeAverager = new FrameTimeAverager(0.666);
         private TimeSpan TotalElapsedTime => gameTime?.TotalGameTime ?? TimeSpan.Zero;
         
