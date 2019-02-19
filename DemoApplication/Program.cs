@@ -27,7 +27,7 @@ namespace DemoApplication
         static Demo Instance => _instance;
         static readonly Demo _instance = new Demo();
 
-        uint width = 1024, height = 768, viewScale = 1;
+        uint width = 800, height = 800, viewScale = 1;
         Sdl2Window window;
         CommandList commandList;
         DeviceBuffer vertexBuffer, indexBuffer;
