@@ -6,6 +6,7 @@ using Veldrid.StartupUtilities;
 using Veldrid.SPIRV;
 using System;
 using System.Linq;
+using System.Diagnostics;
 
 namespace DemoApplication
 {
@@ -33,11 +34,11 @@ namespace DemoApplication
         DeviceBuffer vertexBuffer, indexBuffer;
         Shader[] shaders;
         Pipeline pipeline;
+        Stopwatch stopwatch = new Stopwatch();
 
-        public Demo(bool LimitFrameRate = true) 
+        public Demo(bool LimitFrameRate = false) 
             : base(LimitFrameRate)
         {
-
         }
 
         protected override GraphicsDevice CreateGraphicsDevice()
@@ -48,7 +49,8 @@ namespace DemoApplication
             VeldridStartup.CreateWindowAndGraphicsDevice(
                  new WindowCreateInfo(100, 100, (int)(width * viewScale), (int)(height * viewScale), WindowState.Normal, ""),
                  new GraphicsDeviceOptions(debug: false, swapchainDepthFormat: null, syncToVerticalBlank: false),
-                 backend,
+                 GraphicsBackend.OpenGLES,
+                 //backend,
                  out window,
                  out graphicsDevice);
             window.CursorVisible = true;
@@ -104,10 +106,10 @@ namespace DemoApplication
         {
             var factory = GraphicsDevice.ResourceFactory;
             VertexPositionColor[] quadVertices = {
-                new VertexPositionColor(new Vector2(-.75f, .75f), RgbaFloat.Red),
-                new VertexPositionColor(new Vector2(.75f, .75f), RgbaFloat.Green),
-                new VertexPositionColor(new Vector2(-.75f, -.75f), RgbaFloat.Blue),
-                new VertexPositionColor(new Vector2(.75f, -.75f), RgbaFloat.Yellow)
+                new VertexPositionColor(new Vector2(-1.0f, 1.0f), RgbaFloat.Red),
+                new VertexPositionColor(new Vector2(1.0f, 1.0f), RgbaFloat.Green),
+                new VertexPositionColor(new Vector2(-1.0f, -1.0f), RgbaFloat.Blue),
+                new VertexPositionColor(new Vector2(1.0f, -1.0f), RgbaFloat.Yellow)
             };
             ushort[] quadIndices = { 0, 1, 2, 3 };
 
@@ -120,6 +122,8 @@ namespace DemoApplication
             var vertexLayout = createVertexLayout();
             pipeline = createPipeline(vertexLayout);
             commandList = factory.CreateCommandList();
+            stopwatch = new Stopwatch();
+            stopwatch.Start();
         }
 
         protected override void Render(double dt)
@@ -163,9 +167,13 @@ namespace DemoApplication
                     Exit();
                 }
             }
-
-            var frameTime = gameTime.ElapsedGameTime.Milliseconds;
-            window.Title = $"FrameTime: {frameTime} ms, Fps: {FramesPerSecond}, TotalFrames: {TotalFrames}, Width: {width}, Height: {height}";
+            
+            if(stopwatch.Elapsed.Milliseconds > 500)
+            {   
+                var frameTime = gameTime.ElapsedGameTime.Milliseconds;
+                window.Title = $"FrameTime: {1000/FramesPerSecond:0.##} ms, Fps: {FramesPerSecond}, TotalFrames: {TotalFrames}, Width: {width}, Height: {height}";
+                stopwatch.Restart();
+            }
         }
 
         public override void Dispose()

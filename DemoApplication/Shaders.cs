@@ -23,18 +23,21 @@ void main()
 
 layout(location = 0) in vec2 fsin_Position;
 layout(location = 1) in vec4 fsin_Color;
-
 layout(location = 0) out vec4 fsout_Color;
+
+float sdf(vec2 p)
+{
+    return length(p) - 1.0;
+}
 
 void main()
 {
     fsout_Color = fsin_Color;
-
-    if(distance(fsin_Position, vec2(0)) - 0.75 < 0)
+    
+    if(sdf(fsin_Position) < 0)
     {
         fsout_Color = fsin_Color * vec4(0.5);
     }
-
 }";
     }
 }
