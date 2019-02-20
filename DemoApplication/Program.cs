@@ -7,6 +7,7 @@ using Veldrid.SPIRV;
 using System;
 using System.Linq;
 using System.Diagnostics;
+using File = System.IO.File;
 
 namespace DemoApplication
 {
@@ -50,7 +51,7 @@ namespace DemoApplication
                  new WindowCreateInfo(100, 100, (int)(width * viewScale), (int)(height * viewScale), WindowState.Normal, ""),
                  new GraphicsDeviceOptions(debug: false, swapchainDepthFormat: null, syncToVerticalBlank: false),
                  GraphicsBackend.OpenGLES,
-                 //backend,
+                //  backend,
                  out window,
                  out graphicsDevice);
             window.CursorVisible = true;
@@ -66,8 +67,8 @@ namespace DemoApplication
 
         private Shader[] createShaders()
         {
-            ShaderDescription vertexShaderDesc = new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(DemoShaders.VertexCode), "main");
-            ShaderDescription fragmentShaderDesc = new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(DemoShaders.FragmentCode), "main");
+            ShaderDescription vertexShaderDesc = new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(File.ReadAllText("./Shaders/VertexShader.hlsl")), "main");
+            ShaderDescription fragmentShaderDesc = new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(File.ReadAllText("./Shaders/FragmentShader.hlsl")), "main");
             return GraphicsDevice.ResourceFactory.CreateFromSpirv(vertexShaderDesc, fragmentShaderDesc);
         }
 
