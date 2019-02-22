@@ -45,8 +45,8 @@ namespace DemoApplication
 
         private Shader[] createShaders()
         {
-            var vertexShaderDesc = new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(File.ReadAllText("./Shaders/VertexShader.hlsl")), "main");
-            var fragmentShaderDesc = new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(File.ReadAllText("./Shaders/FragmentShader.hlsl")), "main");
+            var vertexShaderDesc = new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(File.ReadAllText("./Shaders/RayMarchingDemo/VertexShader.hlsl")), "main");
+            var fragmentShaderDesc = new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(File.ReadAllText("./Shaders/RayMarchingDemo/FragmentShader.hlsl")), "main");
             return GraphicsDevice.ResourceFactory.CreateFromSpirv(vertexShaderDesc, fragmentShaderDesc);
         }
 
