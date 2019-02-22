@@ -76,8 +76,11 @@ namespace DemoApplication
 
             pipelineDescription.PrimitiveTopology = PrimitiveTopology.TriangleStrip;
             pipelineDescription.ResourceLayouts = System.Array.Empty<ResourceLayout>();
-            pipelineDescription.ShaderSet = new ShaderSetDescription(vertexLayouts: new VertexLayoutDescription[] { vertexLayout }, shaders: shaders);
+            pipelineDescription.ShaderSet = new ShaderSetDescription(
+                vertexLayouts: new VertexLayoutDescription[] { vertexLayout }, 
+                shaders: shaders);
             pipelineDescription.Outputs = GraphicsDevice.SwapchainFramebuffer.OutputDescription;
+
             return GraphicsDevice.ResourceFactory.CreateGraphicsPipeline(pipelineDescription);
         }
 
@@ -114,8 +117,7 @@ namespace DemoApplication
             {
                 if (input.KeyCharPresses.Contains('l'))
                 {
-                    LimitFrameRate = !LimitFrameRate;
-                    Console.WriteLine($"LimitFramerate: {LimitFrameRate}");
+                    Console.WriteLine($"LimitFramerate: {LimitFrameRate = !LimitFrameRate}");
                 }
                 if (input.KeyCharPresses.Contains('q'))
                 {
