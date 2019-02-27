@@ -10,9 +10,10 @@ namespace Engine
         public bool IsRunning { get; private set; }
         public bool LimitFrameRate { get; protected set; }
         public GraphicsDevice GraphicsDevice { get; private set; }
-
         public Framebuffer FrameBuffer => GraphicsDevice.SwapchainFramebuffer;
-        public double DesiredFrameLengthSeconds => 1.0 / 60.0;
+
+        public double DesiredFrameRate => 2.0;
+        public double DesiredFrameLengthSeconds => 1.0 / DesiredFrameRate;
         public double FramesPerSecond => Math.Round(frameTimeAverager.CurrentAverageFramesPerSecond);
         public int TotalFrames => frameTimeAverager.TotalFrames;
 
@@ -44,9 +45,9 @@ namespace Engine
             GraphicsDevice = CreateGraphicsDevice();
             CreateResources();
             var stopWatch = new Stopwatch();
+            stopWatch.Start();
 
-            int updatesPerSecond = 100;
-            double lag = 0, msPerUpdate = 1.0 / updatesPerSecond;
+            double lag = 0;
             while (IsRunning)
             {
                 gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
@@ -54,10 +55,10 @@ namespace Engine
                 frameTimeAverager.AddTime(gameTime.ElapsedGameTime.TotalMilliseconds);
 
                 GetUserInput();
-                while (lag >= msPerUpdate)
+                while (lag >= DesiredFrameLengthSeconds)
                 {
                     Update(gameTime.ElapsedGameTime.TotalMilliseconds);
-                    lag -= msPerUpdate;
+                    lag -= DesiredFrameLengthSeconds;
                 }
                 Render();
                 stopWatch.Restart();
@@ -70,12 +71,11 @@ namespace Engine
             GraphicsDevice = CreateGraphicsDevice();
             CreateResources();
             var stopWatch = new Stopwatch();
-
-            gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
-            stopWatch.Restart();
-
+            stopWatch.Start();
             while (IsRunning)
             {
+                gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
+                frameTimeAverager.AddTime(gameTime.ElapsedGameTime.TotalMilliseconds);
                 GetUserInput();
                 Update(gameTime.ElapsedGameTime.TotalSeconds);
 
@@ -89,8 +89,8 @@ namespace Engine
                 if (gameTime.ElapsedGameTime.TotalSeconds > DesiredFrameLengthSeconds * 1.25)
                     gameTime = GameTime.RunningSlowly(gameTime);
 
-                frameTimeAverager.AddTime(gameTime.ElapsedGameTime.TotalSeconds);
                 Render();
+                stopWatch.Restart();
             }
         }
 
