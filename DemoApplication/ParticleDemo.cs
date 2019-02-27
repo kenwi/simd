@@ -13,6 +13,11 @@ namespace DemoApplication
             throw new System.NotImplementedException();
         }
 
+        protected override void GetUserInput()
+        {
+            throw new System.NotImplementedException();
+        }
+
         protected override void Update(double dt)
         {
             throw new System.NotImplementedException();
