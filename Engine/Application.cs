@@ -34,34 +34,59 @@ namespace Engine
             GraphicsDevice = CreateGraphicsDevice();
             CreateResources();
 
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
+            double lag = 0.0;
+            double previous = DateTime.Now.Ticks;
             while(IsRunning)
             {
-                gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
-                var dt = gameTime.ElapsedGameTime.TotalSeconds;
-                stopWatch.Restart();
+                double currentTime = DateTime.Now.Ticks;
+                double elapsed = currentTime - previous;
+                previous = currentTime;
+                lag += elapsed; 
 
-                while(LimitFrameRate && dt < DesiredFrameLengthSeconds)
+                while(lag >= TimeSpan.TicksPerSecond)
                 {
-                    var elapsed = stopWatch.Elapsed;
-                    gameTime = new GameTime(TotalElapsedTime + elapsed, gameTime.ElapsedGameTime + elapsed);
-                    dt += elapsed.TotalSeconds;
-                    stopWatch.Restart();
+                    Console.WriteLine($"[{DateTime.Now}] Update {lag}");
+                    Update(TimeSpan.TicksPerSecond);
+                    lag -= TimeSpan.TicksPerSecond;
                 }
-
-                if(dt > DesiredFrameLengthSeconds * 1.25)
-                    gameTime = GameTime.RunningSlowly(gameTime);
-
-                frameTimeAverager.AddTime(dt);
-
-                Update(dt);
-                if (IsRunning)
-                    Render(dt);
+                Render();
             }
         }
 
-        protected virtual void Render(double dt)
+        // public void Run()
+        // {
+        //     IsRunning = true;
+        //     GraphicsDevice = CreateGraphicsDevice();
+        //     CreateResources();
+
+        //     var stopWatch = new Stopwatch();
+        //     stopWatch.Start();
+        //     while(IsRunning)
+        //     {
+        //         gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
+        //         var dt = gameTime.ElapsedGameTime.TotalSeconds;
+        //         stopWatch.Restart();
+
+        //         while(LimitFrameRate && dt < DesiredFrameLengthSeconds)
+        //         {
+        //             var elapsed = stopWatch.Elapsed;
+        //             gameTime = new GameTime(TotalElapsedTime + elapsed, gameTime.ElapsedGameTime + elapsed);
+        //             dt += elapsed.TotalSeconds;
+        //             stopWatch.Restart();
+        //         }
+
+        //         if(dt > DesiredFrameLengthSeconds * 1.25)
+        //             gameTime = GameTime.RunningSlowly(gameTime);
+
+        //         frameTimeAverager.AddTime(dt);
+
+        //         Update(dt);
+        //         if (IsRunning)
+        //             Render(dt);
+        //     }
+        // }
+
+        protected virtual void Render()
         {
             GraphicsDevice.SwapBuffers();
             GraphicsDevice.WaitForIdle();

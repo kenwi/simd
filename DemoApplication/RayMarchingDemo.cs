@@ -84,7 +84,7 @@ namespace DemoApplication
             return GraphicsDevice.ResourceFactory.CreateGraphicsPipeline(pipelineDescription);
         }
 
-        protected override void Render(double dt)
+        protected override void Render()
         {
             var cl = commandList as CommandList;
             cl.Begin();
@@ -102,7 +102,7 @@ namespace DemoApplication
             );
             cl.End();
             GraphicsDevice.SubmitCommands(cl);
-            base.Render(dt);
+            base.Render();
         }
 
         protected override void Update(double dt)
