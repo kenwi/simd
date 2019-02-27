@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Veldrid;
 using Veldrid.Sdl2;
@@ -21,6 +22,7 @@ namespace DemoApplication
         Shader[] shaders;
         Pipeline pipeline;
         Stopwatch stopwatch = new Stopwatch();
+        InputSnapshot inputSnapshot;
 
         protected override void CreateResources()
         {
@@ -77,14 +79,15 @@ namespace DemoApplication
             pipelineDescription.PrimitiveTopology = PrimitiveTopology.TriangleStrip;
             pipelineDescription.ResourceLayouts = System.Array.Empty<ResourceLayout>();
             pipelineDescription.ShaderSet = new ShaderSetDescription(
-                vertexLayouts: new VertexLayoutDescription[] { vertexLayout }, 
+                vertexLayouts: new VertexLayoutDescription[] { vertexLayout },
                 shaders: shaders);
             pipelineDescription.Outputs = GraphicsDevice.SwapchainFramebuffer.OutputDescription;
 
             return GraphicsDevice.ResourceFactory.CreateGraphicsPipeline(pipelineDescription);
         }
 
-        protected override void Render(double dt)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected override void Render()
         {
             var cl = commandList as CommandList;
             cl.Begin();
@@ -102,9 +105,15 @@ namespace DemoApplication
             );
             cl.End();
             GraphicsDevice.SubmitCommands(cl);
-            base.Render(dt);
+            base.Render();
         }
 
+        protected override void GetUserInput()
+        {
+            inputSnapshot = window.PumpEvents();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Update(double dt)
         {
             if (!window.Exists)
@@ -112,14 +121,13 @@ namespace DemoApplication
                 Exit();
                 return;
             }
-            var input = window.PumpEvents();
-            if (input.KeyEvents.Count > 0)
+            if (inputSnapshot.KeyCharPresses.Count > 0)
             {
-                if (input.KeyCharPresses.Contains('l'))
+                if (inputSnapshot.KeyCharPresses.Contains('l'))
                 {
                     Console.WriteLine($"LimitFramerate: {LimitFrameRate = !LimitFrameRate}");
                 }
-                if (input.KeyCharPresses.Contains('q'))
+                if (inputSnapshot.KeyCharPresses.Contains('q'))
                 {
                     Exit();
                 }
