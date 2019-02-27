@@ -86,7 +86,10 @@ namespace DemoApplication
             return GraphicsDevice.ResourceFactory.CreateGraphicsPipeline(pipelineDescription);
         }
 
+<<<<<<< HEAD
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+=======
+>>>>>>> 181a192aba987afaac3a187a9eb7c04cb698e70c
         protected override void Render()
         {
             var cl = commandList as CommandList;
