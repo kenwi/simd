@@ -86,10 +86,7 @@ namespace DemoApplication
             return GraphicsDevice.ResourceFactory.CreateGraphicsPipeline(pipelineDescription);
         }
 
-<<<<<<< HEAD
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-=======
->>>>>>> 181a192aba987afaac3a187a9eb7c04cb698e70c
         protected override void Render()
         {
             var cl = commandList as CommandList;
@@ -136,7 +133,7 @@ namespace DemoApplication
                 }
             }
 
-            if (stopwatch.Elapsed.Milliseconds > 500)
+            if (stopwatch.Elapsed.Milliseconds > 100)
             {
                 window.Title = $"FrameTime: {FramesPerSecond * 1e-4:0.##} ms, Fps: {FramesPerSecond}, TotalFrames: {TotalFrames}, Width: {width}, Height: {height}";
                 stopwatch.Restart();
