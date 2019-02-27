@@ -25,7 +25,7 @@ namespace Engine
         private readonly FrameTimeAverager frameTimeAverager = new FrameTimeAverager(0.666);
         private TimeSpan TotalElapsedTime => gameTime?.TotalGameTime ?? TimeSpan.Zero;
 
-        public Application(bool LimitFrameRate = false)
+        public Application(bool LimitFrameRate = true)
         {
             this.LimitFrameRate = LimitFrameRate;
         }
@@ -43,7 +43,6 @@ namespace Engine
             IsRunning = true;
             GraphicsDevice = CreateGraphicsDevice();
             CreateResources();
-<<<<<<< HEAD
             var stopWatch = new Stopwatch();
 
             int updatesPerSecond = 100;
@@ -75,78 +74,27 @@ namespace Engine
             gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
             stopWatch.Restart();
 
-            while (LimitFrameRate && gameTime.ElapsedGameTime.TotalSeconds < DesiredFrameLengthSeconds)
+            while (IsRunning)
             {
-                var elapsed = stopWatch.Elapsed;
-                gameTime = new GameTime(TotalElapsedTime + elapsed, gameTime.ElapsedGameTime + elapsed);
-                stopWatch.Restart();
-            }
+                GetUserInput();
+                Update(gameTime.ElapsedGameTime.TotalSeconds);
 
-            if (gameTime.ElapsedGameTime.TotalSeconds > DesiredFrameLengthSeconds * 1.25)
-                gameTime = GameTime.RunningSlowly(gameTime);
-
-            frameTimeAverager.AddTime(gameTime.ElapsedGameTime.TotalSeconds);
-
-            Update(gameTime.ElapsedGameTime.TotalSeconds);
-            Render();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-=======
-
-            double lag = 0.0;
-            double previous = DateTime.Now.Ticks;
-            while(IsRunning)
-            {
-                double currentTime = DateTime.Now.Ticks;
-                double elapsed = currentTime - previous;
-                previous = currentTime;
-                lag += elapsed; 
-
-                while(lag >= TimeSpan.TicksPerSecond)
+                while (LimitFrameRate && gameTime.ElapsedGameTime.TotalSeconds < DesiredFrameLengthSeconds)
                 {
-                    Console.WriteLine($"[{DateTime.Now}] Update {lag}");
-                    Update(TimeSpan.TicksPerSecond);
-                    lag -= TimeSpan.TicksPerSecond;
+                    var elapsed = stopWatch.Elapsed;
+                    gameTime = new GameTime(TotalElapsedTime + elapsed, gameTime.ElapsedGameTime + elapsed);
+                    stopWatch.Restart();
                 }
+
+                if (gameTime.ElapsedGameTime.TotalSeconds > DesiredFrameLengthSeconds * 1.25)
+                    gameTime = GameTime.RunningSlowly(gameTime);
+
+                frameTimeAverager.AddTime(gameTime.ElapsedGameTime.TotalSeconds);
                 Render();
             }
         }
 
-        // public void Run()
-        // {
-        //     IsRunning = true;
-        //     GraphicsDevice = CreateGraphicsDevice();
-        //     CreateResources();
-
-        //     var stopWatch = new Stopwatch();
-        //     stopWatch.Start();
-        //     while(IsRunning)
-        //     {
-        //         gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
-        //         var dt = gameTime.ElapsedGameTime.TotalSeconds;
-        //         stopWatch.Restart();
-
-        //         while(LimitFrameRate && dt < DesiredFrameLengthSeconds)
-        //         {
-        //             var elapsed = stopWatch.Elapsed;
-        //             gameTime = new GameTime(TotalElapsedTime + elapsed, gameTime.ElapsedGameTime + elapsed);
-        //             dt += elapsed.TotalSeconds;
-        //             stopWatch.Restart();
-        //         }
-
-        //         if(dt > DesiredFrameLengthSeconds * 1.25)
-        //             gameTime = GameTime.RunningSlowly(gameTime);
-
-        //         frameTimeAverager.AddTime(dt);
-
-        //         Update(dt);
-        //         if (IsRunning)
-        //             Render(dt);
-        //     }
-        // }
-
->>>>>>> 181a192aba987afaac3a187a9eb7c04cb698e70c
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual void Render()
         {
             if (!IsRunning)
