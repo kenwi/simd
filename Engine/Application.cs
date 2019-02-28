@@ -30,7 +30,7 @@ namespace Engine
         private readonly FrameTimeAverager frameTimeAverager = new FrameTimeAverager();
         private TimeSpan TotalElapsedTime => gameTime?.TotalGameTime ?? TimeSpan.Zero;
 
-        public Application(bool LimitRate = true, double DesiredFrameRate = 60.0, double DesiredUpdateRate = 60.0)
+        public Application(bool LimitRate = false, double DesiredFrameRate = 60.0, double DesiredUpdateRate = 60.0)
         {
             this.DesiredUpdateRate = DesiredUpdateRate;
             this.DesiredFrameRate = DesiredFrameRate;
@@ -86,8 +86,8 @@ namespace Engine
             while (IsRunning)
             {
                 gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
-                lag += gameTime.ElapsedGameTime.TotalSeconds;
-                frameTimeAverager.AddTime(gameTime.ElapsedGameTime.TotalSeconds);
+                lag += gameTime.ElapsedGameTime.TotalMilliseconds;
+                frameTimeAverager.AddTime(gameTime.ElapsedGameTime.TotalMilliseconds);
 
                 GetUserInput();
                 while (lag >= DesiredUpdateLengthSeconds)
@@ -108,8 +108,8 @@ namespace Engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual void Render()
         {
-            GraphicsDevice.SwapBuffers();
-            GraphicsDevice.WaitForIdle();
+            GraphicsDevice?.SwapBuffers();
+            GraphicsDevice?.WaitForIdle();
         }
 
         public void Exit()
