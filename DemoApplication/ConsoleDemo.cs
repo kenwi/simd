@@ -62,9 +62,7 @@ namespace DemoApplication
             numFrames++;
             if (renderStopwatch.Elapsed.TotalSeconds > 2)
             {
-                var fps = numFrames / (DateTime.Now - startTime).TotalSeconds;
-                var ups = numUpdates / (DateTime.Now - startTime).TotalSeconds;
-                PrintLine($"[Render] Dt: {dt:0.####} Frames: {numFrames} @ {fps:N} hz Updates: {numUpdates} @ {ups:N} hz");
+                printStats(dt, numFrames, numUpdates, startTime);
                 renderStopwatch.Restart();
             }
         }
@@ -74,11 +72,16 @@ namespace DemoApplication
             numUpdates++;
             if (updateStopwatch.Elapsed.TotalSeconds > 2)
             {
-                var fps = numFrames / (DateTime.Now - startTime).TotalSeconds;
-                var ups = numUpdates / (DateTime.Now - startTime).TotalSeconds;
-                PrintLine($"[Update] Dt: {dt:0.####} Frames: {numFrames} @ {fps:N} hz Updates: {numUpdates} @ {ups:N} hz");
+                printStats(dt, numFrames, numUpdates, startTime);
                 updateStopwatch.Restart();
             }
+        }
+
+        private void printStats(double dt, uint numFrames, uint numUpdates, DateTime startTime)
+        {
+            var fps = numFrames / (DateTime.Now - startTime).TotalSeconds;
+            var ups = numUpdates / (DateTime.Now - startTime).TotalSeconds;
+            PrintLine($"[Render] Dt: {dt:0.####} Frames: {numFrames} @ {fps:N} hz Updates: {numUpdates} @ {ups:N} hz");
         }
     }
 }
