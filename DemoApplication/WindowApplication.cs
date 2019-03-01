@@ -11,7 +11,7 @@ using File = System.IO.File;
 
 namespace DemoApplication
 {
-    public abstract class Demo : Engine.Application
+    public abstract class WindowApplication : Engine.Application
     {
         protected uint width = 800, height = 800, viewScale = 1;
         protected Sdl2Window window;
