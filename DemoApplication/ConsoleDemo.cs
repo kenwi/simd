@@ -32,6 +32,7 @@ namespace DemoApplication
         {
             Console.WriteLine($"[{DateTime.Now}] Creating resources");
             Console.WriteLine($"[{DateTime.Now}] IsInputRedirected {Console.IsInputRedirected}");
+            Console.WriteLine($"[{DateTime.Now}] LimitFrameRate {LimitFrameRate}");
             renderStopwatch.Start();
             updateStopwatch.Start();
         }
