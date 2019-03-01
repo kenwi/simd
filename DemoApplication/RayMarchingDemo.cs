@@ -87,7 +87,7 @@ namespace DemoApplication
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected override void Render()
+        protected override void Render(double dt)
         {
             var cl = commandList as CommandList;
             cl.Begin();
@@ -105,10 +105,10 @@ namespace DemoApplication
             );
             cl.End();
             GraphicsDevice.SubmitCommands(cl);
-            base.Render();
+            base.Render(dt);
         }
 
-        protected override void GetUserInput()
+        protected override void GetEvents()
         {
             inputSnapshot = window.PumpEvents();
         }

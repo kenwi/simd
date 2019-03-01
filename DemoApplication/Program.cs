@@ -2,6 +2,6 @@
 {
     class Program
     {
-        static void Main() => RayMarchingDemo.Instance.Run();
+        static void Main() => ConsoleDemo.Instance.Run();
     }
 }

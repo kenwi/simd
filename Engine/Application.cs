@@ -13,8 +13,6 @@ namespace Engine
         public Framebuffer FrameBuffer => GraphicsDevice.SwapchainFramebuffer;
 
         public double DesiredUpdateRate;
-        public double DesiredFrameRate;
-        public double DesiredFrameLengthSeconds => 1.0 / DesiredFrameRate;
         public double DesiredUpdateLengthSeconds => 1.0 / DesiredUpdateRate;
         
         public double FramesPerSecond => Math.Round(frameTimeAverager.CurrentAverageFramesPerSecond);
@@ -22,7 +20,7 @@ namespace Engine
 
         protected abstract GraphicsDevice CreateGraphicsDevice();
         protected abstract void Update(double dt);
-        protected abstract void GetUserInput();
+        protected abstract void GetEvents();
         protected abstract void CreateResources();
         protected GameTime gameTime;
 
@@ -30,10 +28,9 @@ namespace Engine
         private readonly FrameTimeAverager frameTimeAverager = new FrameTimeAverager();
         private TimeSpan TotalElapsedTime => gameTime?.TotalGameTime ?? TimeSpan.Zero;
 
-        public Application(bool LimitRate = false, double DesiredFrameRate = 60.0, double DesiredUpdateRate = 60.0)
+        public Application(bool LimitRate = true, double DesiredUpdateRate = 60.0)
         {
             this.DesiredUpdateRate = DesiredUpdateRate;
-            this.DesiredFrameRate = DesiredFrameRate;
             this.LimitFrameRate = LimitRate;
             stopWatch.Start();
         }
@@ -47,7 +44,7 @@ namespace Engine
             if (LimitFrameRate)
                 RunRateLimited();
             else
-                RunUpdateLimited();
+                RunVariableUpdate();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -57,39 +54,39 @@ namespace Engine
             {
                 gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
                 var dt = gameTime.ElapsedGameTime.TotalSeconds;
-                stopWatch.Restart();
 
-                GetUserInput();
-                while (LimitFrameRate && dt < DesiredFrameLengthSeconds)
+                while (LimitFrameRate && dt < DesiredUpdateLengthSeconds)
                 {
-                    var elapsed = stopWatch.Elapsed;
-                    gameTime = new GameTime(TotalElapsedTime + elapsed, gameTime.ElapsedGameTime + elapsed);
-                    dt += elapsed.TotalSeconds;
+                    gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, gameTime.ElapsedGameTime + stopWatch.Elapsed);
+                    dt += stopWatch.Elapsed.TotalSeconds;
                     stopWatch.Restart();
                 }
 
-                if (dt > DesiredFrameLengthSeconds * 1.25)
+                if (dt > DesiredUpdateLengthSeconds * 1.25)
                     gameTime = GameTime.RunningSlowly(gameTime);
 
-                frameTimeAverager.AddTime(dt);
+                GetEvents();
                 Update(dt);
 
                 if (IsRunning)
-                    Render();
+                {
+                    Render(dt);
+                    stopWatch.Restart();
+                    frameTimeAverager.AddTime(dt);
+                }
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void RunUpdateLimited()
+        private void RunVariableUpdate()
         {
             double lag = 0;
             while (IsRunning)
             {
                 gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
-                lag += gameTime.ElapsedGameTime.TotalMilliseconds;
-                frameTimeAverager.AddTime(gameTime.ElapsedGameTime.TotalMilliseconds);
+                lag += gameTime.ElapsedGameTime.TotalSeconds;
 
-                GetUserInput();
+                GetEvents();
                 while (lag >= DesiredUpdateLengthSeconds)
                 {
                     Update(DesiredUpdateLengthSeconds);
@@ -98,24 +95,25 @@ namespace Engine
 
                 if (IsRunning)
                 {
-                    Render();
+                    Render(lag / DesiredUpdateLengthSeconds);
                     stopWatch.Restart();
+                    frameTimeAverager.AddTime(gameTime.ElapsedGameTime.TotalSeconds);
                 }
             }
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected virtual void Render()
+        protected virtual void Render(double dt)
         {
             GraphicsDevice?.SwapBuffers();
             GraphicsDevice?.WaitForIdle();
         }
-
+        
         public void Exit()
         {
             Console.WriteLine("Exiting");
             IsRunning = false;
+            
         }
 
         public virtual void Dispose()

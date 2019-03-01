@@ -13,7 +13,7 @@ namespace DemoApplication
             throw new System.NotImplementedException();
         }
 
-        protected override void GetUserInput()
+        protected override void GetEvents()
         {
             throw new System.NotImplementedException();
         }
