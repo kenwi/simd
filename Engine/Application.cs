@@ -63,7 +63,11 @@ namespace Engine
                 Update(dt);
 
                 if (IsRunning)
+                {
                     Render(dt);
+                    GraphicsDevice?.SwapBuffers();
+                    GraphicsDevice?.WaitForIdle();
+                }
             }
         }
 
