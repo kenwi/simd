@@ -14,7 +14,7 @@ namespace Engine
 
         public double TargetUpdateRate;
         public double TargetUpdateLengthSeconds => 1.0 / TargetUpdateRate;
-        
+
         public double FramesPerSecond => Math.Round(frameTimeAverager.CurrentAverageFramesPerSecond);
         public int TotalFrames => frameTimeAverager.TotalFrames;
 
@@ -27,6 +27,16 @@ namespace Engine
         private Stopwatch stopWatch = new Stopwatch();
         private readonly FrameTimeAverager frameTimeAverager = new FrameTimeAverager();
         private TimeSpan TotalElapsedTime => gameTime?.TotalGameTime ?? TimeSpan.Zero;
+
+        DateTime previousTime;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private double calculateDt()
+        {
+            var currentTime = DateTime.Now;
+            var dt = currentTime - previousTime;
+            previousTime = currentTime;
+            return dt.TotalSeconds;
+        }
 
         public Application(bool LimitRate = true, double TargetUpdateRate = 60.0)
         {
@@ -52,28 +62,15 @@ namespace Engine
         {
             while (IsRunning)
             {
-                gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
-                var dt = gameTime.ElapsedGameTime.TotalSeconds;
-
+                var dt = calculateDt();
                 while (LimitFrameRate && dt < TargetUpdateLengthSeconds)
-                {
-                    gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, gameTime.ElapsedGameTime + stopWatch.Elapsed);
-                    dt += stopWatch.Elapsed.TotalSeconds;
-                    stopWatch.Restart();
-                }
-
-                if (dt > TargetUpdateLengthSeconds * 1.25)
-                    gameTime = GameTime.RunningSlowly(gameTime);
+                    dt += calculateDt();
 
                 GetEvents();
                 Update(dt);
 
                 if (IsRunning)
-                {
                     Render(dt);
-                    frameTimeAverager.AddTime(dt);
-                    stopWatch.Restart();
-                }
             }
         }
 
@@ -81,10 +78,11 @@ namespace Engine
         private void RunVariableUpdate()
         {
             double lag = 0;
+            previousTime = DateTime.Now;
             while (IsRunning)
             {
-                gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
-                lag += gameTime.ElapsedGameTime.TotalSeconds;
+                var dt = calculateDt();
+                lag += dt;
 
                 while (lag >= TargetUpdateLengthSeconds)
                 {
@@ -94,11 +92,7 @@ namespace Engine
                 }
 
                 if (IsRunning)
-                {
                     Render(lag / TargetUpdateLengthSeconds);
-                    frameTimeAverager.AddTime(gameTime.ElapsedGameTime.TotalSeconds);
-                    stopWatch.Restart();
-                }
             }
         }
 
@@ -108,12 +102,12 @@ namespace Engine
             GraphicsDevice?.SwapBuffers();
             GraphicsDevice?.WaitForIdle();
         }
-        
+
         public void Exit()
         {
             Console.WriteLine("Exiting");
             IsRunning = false;
-            
+
         }
 
         public virtual void Dispose()

@@ -11,6 +11,7 @@ namespace DemoApplication
         public static ConsoleDemo Instance => _instance;
         static readonly ConsoleDemo _instance = new ConsoleDemo();
 
+        DateTime startTime;
         Stopwatch renderStopwatch = new Stopwatch(), updateStopwatch = new Stopwatch();
         BackgroundWorker inputBackgroundWorker = new BackgroundWorker();
         uint numFrames = 0, numUpdates = 0;
@@ -19,10 +20,14 @@ namespace DemoApplication
 
         public ConsoleDemo()
         {
-            this.LimitFrameRate = false;
-            this.TargetUpdateRate = 60.0;
-            this.inputBackgroundWorker.DoWork += (s, e) => GetEvents();
-            this.inputBackgroundWorker.RunWorkerAsync();
+            LimitFrameRate = true;
+            TargetUpdateRate = 60.0;
+
+            if (Console.IsInputRedirected)
+                return;
+
+            inputBackgroundWorker.DoWork += (s, e) => GetEvents();
+            inputBackgroundWorker.RunWorkerAsync();
         }
 
         protected override GraphicsDevice CreateGraphicsDevice()
@@ -38,6 +43,7 @@ namespace DemoApplication
             PrintLine($"LimitFrameRate {LimitFrameRate}");
             renderStopwatch.Start();
             updateStopwatch.Start();
+            startTime = DateTime.Now;
         }
 
         protected override void GetEvents()
@@ -48,6 +54,7 @@ namespace DemoApplication
                 switch (input.Key)
                 {
                     case ConsoleKey.Q:
+                        PrintLine($"Key [{input.Key}]");
                         Exit();
                         break;
 
@@ -61,9 +68,11 @@ namespace DemoApplication
         protected override void Render(double dt)
         {
             numFrames++;
-            if(renderStopwatch.Elapsed.TotalSeconds > 2)
+            if (renderStopwatch.Elapsed.TotalSeconds > 2)
             {
-                PrintLine($"[Render] Dt: {dt:0.####}, Frames: {numFrames}, Updates: {numUpdates}");
+                var fps = numFrames / (DateTime.Now - startTime).TotalSeconds;
+                var ups = numUpdates / (DateTime.Now - startTime).TotalSeconds;
+                PrintLine($"[Render] Dt: {dt:0.####} Frames: {numFrames} @ {fps:N} hz Updates: {numUpdates} @ {ups:N} hz");
                 renderStopwatch.Restart();
             }
         }
@@ -71,9 +80,11 @@ namespace DemoApplication
         protected override void Update(double dt)
         {
             numUpdates++;
-            if(updateStopwatch.Elapsed.TotalSeconds > 2)
+            if (updateStopwatch.Elapsed.TotalSeconds > 2)
             {
-                PrintLine($"[Update] Dt: {dt:0.####}, Frames: {numFrames}, Updates: {numUpdates}");
+                var fps = numFrames / (DateTime.Now - startTime).TotalSeconds;
+                var ups = numUpdates / (DateTime.Now - startTime).TotalSeconds;
+                PrintLine($"[Update] Dt: {dt:0.####} Frames: {numFrames} @ {fps:N} hz Updates: {numUpdates} @ {ups:N} hz");
                 updateStopwatch.Restart();
             }
         }
