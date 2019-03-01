@@ -51,7 +51,7 @@ namespace DemoApplication
                         break;
 
                     default:
-                        PrintLine("Key [{input.Key}]");
+                        PrintLine($"Key [{input.Key}]");
                         break;
                 }
             }
