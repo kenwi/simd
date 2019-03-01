@@ -16,6 +16,7 @@ namespace Engine
         public double TargetUpdateLengthSeconds => 1.0 / TargetUpdateRate;
 
         protected abstract GraphicsDevice CreateGraphicsDevice();
+        protected abstract void Render(double dt);
         protected abstract void Update(double dt);
         protected abstract void GetEvents();
         protected abstract void CreateResources();
@@ -84,15 +85,12 @@ namespace Engine
                 }
 
                 if (IsRunning)
+                {
                     Render(lag / TargetUpdateLengthSeconds);
+                    GraphicsDevice?.SwapBuffers();
+                    GraphicsDevice?.WaitForIdle();
+                }
             }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected virtual void Render(double dt)
-        {
-            GraphicsDevice?.SwapBuffers();
-            GraphicsDevice?.WaitForIdle();
         }
 
         public void Exit()

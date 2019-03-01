@@ -114,7 +114,6 @@ namespace DemoApplication
             );
             cl.End();
             GraphicsDevice.SubmitCommands(cl);
-            base.Render(dt);
         }
 
         protected override void GetEvents()
