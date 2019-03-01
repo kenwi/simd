@@ -11,7 +11,7 @@ namespace DemoApplication
         public static ConsoleDemo Instance => _instance;
         static readonly ConsoleDemo _instance = new ConsoleDemo();
 
-        DateTime startTime;
+        DateTime startTime = DateTime.Now;
         Stopwatch renderStopwatch = new Stopwatch(), updateStopwatch = new Stopwatch();
         uint numFrames = 0, numUpdates = 0;
 
@@ -36,7 +36,6 @@ namespace DemoApplication
             PrintLine($"LimitFrameRate {LimitFrameRate}");
             renderStopwatch.Start();
             updateStopwatch.Start();
-            startTime = DateTime.Now;
         }
 
         protected override void GetEvents()

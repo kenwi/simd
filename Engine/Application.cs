@@ -15,20 +15,13 @@ namespace Engine
         public double TargetUpdateRate;
         public double TargetUpdateLengthSeconds => 1.0 / TargetUpdateRate;
 
-        public double FramesPerSecond => Math.Round(frameTimeAverager.CurrentAverageFramesPerSecond);
-        public int TotalFrames => frameTimeAverager.TotalFrames;
-
         protected abstract GraphicsDevice CreateGraphicsDevice();
         protected abstract void Update(double dt);
         protected abstract void GetEvents();
         protected abstract void CreateResources();
-        protected GameTime gameTime;
-
-        private Stopwatch stopWatch = new Stopwatch();
-        private readonly FrameTimeAverager frameTimeAverager = new FrameTimeAverager();
-        private TimeSpan TotalElapsedTime => gameTime?.TotalGameTime ?? TimeSpan.Zero;
 
         DateTime previousTime;
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private double calculateDt()
         {
@@ -42,7 +35,6 @@ namespace Engine
         {
             this.TargetUpdateRate = TargetUpdateRate;
             this.LimitFrameRate = LimitRate;
-            stopWatch.Start();
         }
 
         public void Run()
@@ -84,7 +76,7 @@ namespace Engine
                 var dt = calculateDt();
                 lag += dt;
 
-                while (lag >= TargetUpdateLengthSeconds)
+                while (IsRunning && lag >= TargetUpdateLengthSeconds)
                 {
                     GetEvents();
                     Update(TargetUpdateLengthSeconds);
@@ -107,7 +99,6 @@ namespace Engine
         {
             Console.WriteLine("Exiting");
             IsRunning = false;
-
         }
 
         public virtual void Dispose()

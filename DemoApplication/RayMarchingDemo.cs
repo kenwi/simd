@@ -23,6 +23,14 @@ namespace DemoApplication
         Pipeline pipeline;
         Stopwatch stopwatch = new Stopwatch();
         InputSnapshot inputSnapshot;
+        uint numFrames = 0, numUpdates = 0;
+        DateTime startTime = DateTime.Now;
+
+        public RayMarchingDemo()
+        {
+            LimitFrameRate = false;
+            TargetUpdateRate = 60.0;
+        }
 
         protected override void CreateResources()
         {
@@ -89,6 +97,7 @@ namespace DemoApplication
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Render(double dt)
         {
+            numFrames++;
             var cl = commandList as CommandList;
             cl.Begin();
             cl.SetFramebuffer(GraphicsDevice.MainSwapchain.Framebuffer);
@@ -116,6 +125,7 @@ namespace DemoApplication
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Update(double dt)
         {
+            numUpdates++;
             if (!window.Exists)
             {
                 Exit();
@@ -123,19 +133,17 @@ namespace DemoApplication
             }
             if (inputSnapshot.KeyCharPresses.Count > 0)
             {
-                if (inputSnapshot.KeyCharPresses.Contains('l'))
-                {
-                    Console.WriteLine($"LimitFramerate: {LimitFrameRate = !LimitFrameRate}");
-                }
                 if (inputSnapshot.KeyCharPresses.Contains('q'))
                 {
                     Exit();
                 }
             }
 
-            if (stopwatch.Elapsed.Milliseconds > 100)
+            if (stopwatch.Elapsed.TotalSeconds > 2)
             {
-                window.Title = $"FrameTime: {FramesPerSecond * 1e-4:0.##} ms, Fps: {FramesPerSecond}, TotalFrames: {TotalFrames}, Width: {width}, Height: {height}";
+                var fps = numFrames / (DateTime.Now - startTime).TotalSeconds;
+                var ups = numUpdates / (DateTime.Now - startTime).TotalSeconds;
+                window.Title = $"Dt: {dt:0.####} Frames: {numFrames} @ {fps:0} hz Updates: {numUpdates} @ {ups:0} hz";
                 stopwatch.Restart();
             }
         }
