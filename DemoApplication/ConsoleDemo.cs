@@ -11,13 +11,13 @@ namespace DemoApplication
         public static ConsoleDemo Instance => _instance;
         static readonly ConsoleDemo _instance = new ConsoleDemo();
 
-        Stopwatch stopwatch = new Stopwatch();
+        Stopwatch renderStopwatch = new Stopwatch(), updateStopwatch = new Stopwatch();
         BackgroundWorker inputBackgroundWorker = new BackgroundWorker();
         uint numFrames = 0, numUpdates = 0;
 
         public ConsoleDemo()
         {
-            this.LimitFrameRate = true;
+            this.LimitFrameRate = false;
             this.inputBackgroundWorker.DoWork += (s, e) => GetEvents();
             this.inputBackgroundWorker.RunWorkerAsync();
         }
@@ -32,7 +32,8 @@ namespace DemoApplication
         {
             Console.WriteLine($"[{DateTime.Now}] Creating resources");
             Console.WriteLine($"[{DateTime.Now}] IsInputRedirected {Console.IsInputRedirected}");
-            stopwatch.Start();
+            renderStopwatch.Start();
+            updateStopwatch.Start();
         }
 
         protected override void GetEvents()
@@ -56,20 +57,20 @@ namespace DemoApplication
         protected override void Render(double dt)
         {
             numFrames++;
-            if(stopwatch.Elapsed.TotalSeconds > 2)
+            if(renderStopwatch.Elapsed.TotalSeconds > 2)
             {
                 Console.WriteLine($"[{DateTime.Now}] [Render] Dt: {dt}, Frames: {numFrames}, Updates: {numUpdates}");
-                stopwatch.Restart();
+                renderStopwatch.Restart();
             }
         }
 
         protected override void Update(double dt)
         {
             numUpdates++;
-            if(stopwatch.Elapsed.TotalSeconds > 2)
+            if(updateStopwatch.Elapsed.TotalSeconds > 2)
             {
                 Console.WriteLine($"[{DateTime.Now}] [Update] Dt: {dt}, Frames: {numFrames}, Updates: {numUpdates}");
-                stopwatch.Restart();
+                updateStopwatch.Restart();
             }
         }
     }
