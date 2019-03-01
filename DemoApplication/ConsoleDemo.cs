@@ -15,18 +15,13 @@ namespace DemoApplication
         DateTime startTime = DateTime.Now;
         uint frameCount = 0, updateCount = 0;
 
+        protected override GraphicsDevice CreateGraphicsDevice() => null;
         static void PrintLine(string output) => Console.WriteLine($"[{DateTime.Now}] {output}");
 
         public ConsoleDemo()
         {
             LimitFrameRate = false;
             TargetUpdateRate = 60.0;
-        }
-
-        protected override GraphicsDevice CreateGraphicsDevice()
-        {
-            PrintLine("Creating graphics device");
-            return null;
         }
 
         protected override void CreateResources()
