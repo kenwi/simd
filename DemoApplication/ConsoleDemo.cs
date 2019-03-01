@@ -13,7 +13,6 @@ namespace DemoApplication
 
         DateTime startTime;
         Stopwatch renderStopwatch = new Stopwatch(), updateStopwatch = new Stopwatch();
-        BackgroundWorker inputBackgroundWorker = new BackgroundWorker();
         uint numFrames = 0, numUpdates = 0;
 
         static void PrintLine(string output) => Console.WriteLine($"[{DateTime.Now}] {output}");
@@ -22,12 +21,6 @@ namespace DemoApplication
         {
             LimitFrameRate = true;
             TargetUpdateRate = 60.0;
-
-            if (Console.IsInputRedirected)
-                return;
-
-            inputBackgroundWorker.DoWork += (s, e) => GetEvents();
-            inputBackgroundWorker.RunWorkerAsync();
         }
 
         protected override GraphicsDevice CreateGraphicsDevice()
