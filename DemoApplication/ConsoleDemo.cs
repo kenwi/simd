@@ -15,6 +15,8 @@ namespace DemoApplication
         BackgroundWorker inputBackgroundWorker = new BackgroundWorker();
         uint numFrames = 0, numUpdates = 0;
 
+        static void PrintLine(string output) => Console.WriteLine($"[{DateTime.Now}] {output}");
+
         public ConsoleDemo()
         {
             this.LimitFrameRate = false;
@@ -24,15 +26,15 @@ namespace DemoApplication
 
         protected override GraphicsDevice CreateGraphicsDevice()
         {
-            Console.WriteLine($"[{DateTime.Now}] Creating graphics device");
+            PrintLine("Creating graphics device");
             return null;
         }
 
         protected override void CreateResources()
         {
-            Console.WriteLine($"[{DateTime.Now}] Creating resources");
-            Console.WriteLine($"[{DateTime.Now}] IsInputRedirected {Console.IsInputRedirected}");
-            Console.WriteLine($"[{DateTime.Now}] LimitFrameRate {LimitFrameRate}");
+            PrintLine("Creating resources");
+            PrintLine("IsInputRedirected {Console.IsInputRedirected}");
+            PrintLine("LimitFrameRate {LimitFrameRate}");
             renderStopwatch.Start();
             updateStopwatch.Start();
         }
@@ -49,7 +51,7 @@ namespace DemoApplication
                         break;
 
                     default:
-                        Console.WriteLine($"[{DateTime.Now}] Key [{input.Key}]");
+                        PrintLine("Key [{input.Key}]");
                         break;
                 }
             }
@@ -60,7 +62,7 @@ namespace DemoApplication
             numFrames++;
             if(renderStopwatch.Elapsed.TotalSeconds > 2)
             {
-                Console.WriteLine($"[{DateTime.Now}] [Render] Dt: {dt}, Frames: {numFrames}, Updates: {numUpdates}");
+                PrintLine("[Render] Dt: {dt}, Frames: {numFrames}, Updates: {numUpdates}");
                 renderStopwatch.Restart();
             }
         }
@@ -70,7 +72,7 @@ namespace DemoApplication
             numUpdates++;
             if(updateStopwatch.Elapsed.TotalSeconds > 2)
             {
-                Console.WriteLine($"[{DateTime.Now}] [Update] Dt: {dt}, Frames: {numFrames}, Updates: {numUpdates}");
+                PrintLine("[Update] Dt: {dt}, Frames: {numFrames}, Updates: {numUpdates}");
                 updateStopwatch.Restart();
             }
         }
