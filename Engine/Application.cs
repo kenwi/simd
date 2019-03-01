@@ -12,8 +12,8 @@ namespace Engine
         public GraphicsDevice GraphicsDevice { get; private set; }
         public Framebuffer FrameBuffer => GraphicsDevice.SwapchainFramebuffer;
 
-        public double DesiredUpdateRate;
-        public double DesiredUpdateLengthSeconds => 1.0 / DesiredUpdateRate;
+        public double TargetUpdateRate;
+        public double TargetUpdateLengthSeconds => 1.0 / TargetUpdateRate;
         
         public double FramesPerSecond => Math.Round(frameTimeAverager.CurrentAverageFramesPerSecond);
         public int TotalFrames => frameTimeAverager.TotalFrames;
@@ -30,7 +30,7 @@ namespace Engine
 
         public Application(bool LimitRate = true, double DesiredUpdateRate = 60.0)
         {
-            this.DesiredUpdateRate = DesiredUpdateRate;
+            this.TargetUpdateRate = DesiredUpdateRate;
             this.LimitFrameRate = LimitRate;
             stopWatch.Start();
         }
@@ -55,14 +55,14 @@ namespace Engine
                 gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
                 var dt = gameTime.ElapsedGameTime.TotalSeconds;
 
-                while (LimitFrameRate && dt < DesiredUpdateLengthSeconds)
+                while (LimitFrameRate && dt < TargetUpdateLengthSeconds)
                 {
                     gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, gameTime.ElapsedGameTime + stopWatch.Elapsed);
                     dt += stopWatch.Elapsed.TotalSeconds;
                     stopWatch.Restart();
                 }
 
-                if (dt > DesiredUpdateLengthSeconds * 1.25)
+                if (dt > TargetUpdateLengthSeconds * 1.25)
                     gameTime = GameTime.RunningSlowly(gameTime);
 
                 GetEvents();
@@ -86,16 +86,16 @@ namespace Engine
                 gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
                 lag += gameTime.ElapsedGameTime.TotalSeconds;
 
-                while (lag >= DesiredUpdateLengthSeconds)
+                while (lag >= TargetUpdateLengthSeconds)
                 {
                     GetEvents();
-                    Update(DesiredUpdateLengthSeconds);
-                    lag -= DesiredUpdateLengthSeconds;
+                    Update(TargetUpdateLengthSeconds);
+                    lag -= TargetUpdateLengthSeconds;
                 }
 
                 if (IsRunning)
                 {
-                    Render(lag / DesiredUpdateLengthSeconds);
+                    Render(lag / TargetUpdateLengthSeconds);
                     frameTimeAverager.AddTime(gameTime.ElapsedGameTime.TotalSeconds);
                     stopWatch.Restart();
                 }

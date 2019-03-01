@@ -20,6 +20,7 @@ namespace DemoApplication
         public ConsoleDemo()
         {
             this.LimitFrameRate = false;
+            this.TargetUpdateRate = 60.0;
             this.inputBackgroundWorker.DoWork += (s, e) => GetEvents();
             this.inputBackgroundWorker.RunWorkerAsync();
         }
