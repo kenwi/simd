@@ -28,9 +28,9 @@ namespace Engine
         private readonly FrameTimeAverager frameTimeAverager = new FrameTimeAverager();
         private TimeSpan TotalElapsedTime => gameTime?.TotalGameTime ?? TimeSpan.Zero;
 
-        public Application(bool LimitRate = true, double DesiredUpdateRate = 60.0)
+        public Application(bool LimitRate = true, double TargetUpdateRate = 60.0)
         {
-            this.TargetUpdateRate = DesiredUpdateRate;
+            this.TargetUpdateRate = TargetUpdateRate;
             this.LimitFrameRate = LimitRate;
             stopWatch.Start();
         }
