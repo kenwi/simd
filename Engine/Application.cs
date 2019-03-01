@@ -71,8 +71,8 @@ namespace Engine
                 if (IsRunning)
                 {
                     Render(dt);
-                    stopWatch.Restart();
                     frameTimeAverager.AddTime(dt);
+                    stopWatch.Restart();
                 }
             }
         }
@@ -86,9 +86,9 @@ namespace Engine
                 gameTime = new GameTime(TotalElapsedTime + stopWatch.Elapsed, stopWatch.Elapsed);
                 lag += gameTime.ElapsedGameTime.TotalSeconds;
 
-                GetEvents();
                 while (lag >= DesiredUpdateLengthSeconds)
                 {
+                    GetEvents();
                     Update(DesiredUpdateLengthSeconds);
                     lag -= DesiredUpdateLengthSeconds;
                 }
@@ -96,8 +96,8 @@ namespace Engine
                 if (IsRunning)
                 {
                     Render(lag / DesiredUpdateLengthSeconds);
-                    stopWatch.Restart();
                     frameTimeAverager.AddTime(gameTime.ElapsedGameTime.TotalSeconds);
+                    stopWatch.Restart();
                 }
             }
         }
