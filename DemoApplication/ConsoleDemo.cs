@@ -62,7 +62,7 @@ namespace DemoApplication
             numFrames++;
             if(renderStopwatch.Elapsed.TotalSeconds > 2)
             {
-                PrintLine($"[Render] Dt: {dt}, Frames: {numFrames}, Updates: {numUpdates}");
+                PrintLine($"[Render] Dt: {dt:0.####}, Frames: {numFrames}, Updates: {numUpdates}");
                 renderStopwatch.Restart();
             }
         }
@@ -72,7 +72,7 @@ namespace DemoApplication
             numUpdates++;
             if(updateStopwatch.Elapsed.TotalSeconds > 2)
             {
-                PrintLine($"[Update] Dt: {dt}, Frames: {numFrames}, Updates: {numUpdates}");
+                PrintLine($"[Update] Dt: {dt:0.####}, Frames: {numFrames}, Updates: {numUpdates}");
                 updateStopwatch.Restart();
             }
         }
