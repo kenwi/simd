@@ -72,11 +72,11 @@ namespace DemoApplication
             }
         }
 
-        private void printStats(string label, double dt, uint numFrames, uint numUpdates, DateTime startTime)
+        private void printStats(string label, double dt, uint frameCount, uint updateCount, DateTime startTime)
         {
-            var fps = numFrames / (DateTime.Now - startTime).TotalSeconds;
-            var ups = numUpdates / (DateTime.Now - startTime).TotalSeconds;
-            PrintLine($"[{label}] Dt: {dt:0.####} Frames: {numFrames} @ {fps:N} hz Updates: {numUpdates} @ {ups:N} hz");
+            var fps = frameCount / (DateTime.Now - startTime).TotalSeconds;
+            var ups = updateCount / (DateTime.Now - startTime).TotalSeconds;
+            PrintLine($"[{label}] Dt: {dt:0.####} Frames: {frameCount} @ {fps:N} hz Updates: {updateCount} @ {ups:N} hz");
         }
     }
 }
