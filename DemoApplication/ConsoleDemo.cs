@@ -11,15 +11,15 @@ namespace DemoApplication
         public static ConsoleDemo Instance => _instance;
         static readonly ConsoleDemo _instance = new ConsoleDemo();
 
-        DateTime startTime = DateTime.Now;
         Stopwatch renderStopwatch = new Stopwatch(), updateStopwatch = new Stopwatch();
-        uint numFrames = 0, numUpdates = 0;
+        DateTime startTime = DateTime.Now;
+        uint frameCount = 0, updateCount = 0;
 
         static void PrintLine(string output) => Console.WriteLine($"[{DateTime.Now}] {output}");
 
         public ConsoleDemo()
         {
-            LimitFrameRate = true;
+            LimitFrameRate = false;
             TargetUpdateRate = 60.0;
         }
 
@@ -59,20 +59,20 @@ namespace DemoApplication
 
         protected override void Render(double dt)
         {
-            numFrames++;
+            frameCount++;
             if (renderStopwatch.Elapsed.TotalSeconds > 2)
             {
-                printStats("Render", dt, numFrames, numUpdates, startTime);
+                printStats("Render", dt, frameCount, updateCount, startTime);
                 renderStopwatch.Restart();
             }
         }
 
         protected override void Update(double dt)
         {
-            numUpdates++;
+            updateCount++;
             if (updateStopwatch.Elapsed.TotalSeconds > 2)
             {
-                printStats("Update", dt, numFrames, numUpdates, startTime);
+                printStats("Update", dt, frameCount, updateCount, startTime);
                 updateStopwatch.Restart();
             }
         }

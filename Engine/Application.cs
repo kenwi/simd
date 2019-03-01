@@ -16,10 +16,10 @@ namespace Engine
         public double TargetUpdateLengthSeconds => 1.0 / TargetUpdateRate;
 
         protected abstract GraphicsDevice CreateGraphicsDevice();
-        protected abstract void Render(double dt);
-        protected abstract void Update(double dt);
-        protected abstract void GetEvents();
         protected abstract void CreateResources();
+        protected abstract void GetEvents();
+        protected abstract void Update(double dt);
+        protected abstract void Render(double dt);
 
         DateTime previousTime;
 
