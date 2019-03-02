@@ -13,7 +13,7 @@ namespace Engine
         public Framebuffer FrameBuffer => GraphicsDevice.SwapchainFramebuffer;
 
         public double TargetUpdateRate;
-        public double TargetUpdateLengthSeconds => 1.0 / TargetUpdateRate;
+        public double TargetUpdatesPerSecond => 1.0 / TargetUpdateRate;
 
         protected abstract GraphicsDevice CreateGraphicsDevice();
         protected abstract void CreateResources();
@@ -56,7 +56,7 @@ namespace Engine
             while (IsRunning)
             {
                 var dt = calculateDt();
-                while (LimitFrameRate && dt < TargetUpdateLengthSeconds)
+                while (LimitFrameRate && dt < TargetUpdatesPerSecond)
                     dt += calculateDt();
 
                 GetEvents();
@@ -79,16 +79,16 @@ namespace Engine
             while (IsRunning)
             {
                 lag += calculateDt();
-                while (IsRunning && lag >= TargetUpdateLengthSeconds)
+                while (IsRunning && lag >= TargetUpdatesPerSecond)
                 {
                     GetEvents();
-                    Update(TargetUpdateLengthSeconds);
-                    lag -= TargetUpdateLengthSeconds;
+                    Update(TargetUpdatesPerSecond);
+                    lag -= TargetUpdatesPerSecond;
                 }
 
                 if (IsRunning)
                 {
-                    Render(lag / TargetUpdateLengthSeconds);
+                    Render(lag / TargetUpdatesPerSecond);
                     GraphicsDevice?.SwapBuffers();
                     GraphicsDevice?.WaitForIdle();
                 }
