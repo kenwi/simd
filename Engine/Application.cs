@@ -78,9 +78,7 @@ namespace Engine
             previousTime = DateTime.Now;
             while (IsRunning)
             {
-                var dt = calculateDt();
-                lag += dt;
-
+                lag += calculateDt();
                 while (IsRunning && lag >= TargetUpdateLengthSeconds)
                 {
                     GetEvents();
