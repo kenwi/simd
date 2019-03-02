@@ -54,7 +54,7 @@ namespace DemoApplication
 
         protected override void Render(double dt)
         {
-            frameCount++;
+            ++frameCount;
             if (renderStopwatch.Elapsed.TotalSeconds > 2)
             {
                 printStats("Render", dt, frameCount, updateCount, startTime);
@@ -64,7 +64,7 @@ namespace DemoApplication
 
         protected override void Update(double dt)
         {
-            updateCount++;
+            ++updateCount;
             if (updateStopwatch.Elapsed.TotalSeconds > 2)
             {
                 printStats("Update", dt, frameCount, updateCount, startTime);
