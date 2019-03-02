@@ -21,7 +21,7 @@ namespace DemoApplication
         public ConsoleDemo()
         {
             LimitFrameRate = false;
-            TargetUpdateRate = 60.0;
+            TargetUpdatesPerSecond = 60.0;
         }
 
         protected override void CreateResources()

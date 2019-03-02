@@ -12,8 +12,8 @@ namespace Engine
         public GraphicsDevice GraphicsDevice { get; private set; }
         public Framebuffer FrameBuffer => GraphicsDevice.SwapchainFramebuffer;
 
-        public double TargetUpdateRate;
-        public double TargetUpdatesPerSecond => 1.0 / TargetUpdateRate;
+        public double TargetUpdatesPerSecond;
+        public double TargetUpdateRate => 1.0 / TargetUpdatesPerSecond;
 
         protected abstract GraphicsDevice CreateGraphicsDevice();
         protected abstract void CreateResources();
@@ -32,9 +32,9 @@ namespace Engine
             return dt.TotalSeconds;
         }
 
-        public Application(bool LimitRate = true, double TargetUpdateRate = 60.0)
+        public Application(bool LimitRate = true, double TargetUpdatesPerSecond = 60.0)
         {
-            this.TargetUpdateRate = TargetUpdateRate;
+            this.TargetUpdatesPerSecond = TargetUpdatesPerSecond;
             this.LimitFrameRate = LimitRate;
         }
 
@@ -56,7 +56,7 @@ namespace Engine
             while (IsRunning)
             {
                 var dt = calculateDt();
-                while (LimitFrameRate && dt < TargetUpdatesPerSecond)
+                while (LimitFrameRate && dt < TargetUpdateRate)
                     dt += calculateDt();
 
                 GetEvents();
@@ -79,16 +79,16 @@ namespace Engine
             while (IsRunning)
             {
                 lag += calculateDt();
-                while (IsRunning && lag >= TargetUpdatesPerSecond)
+                while (IsRunning && lag >= TargetUpdateRate)
                 {
                     GetEvents();
-                    Update(TargetUpdatesPerSecond);
-                    lag -= TargetUpdatesPerSecond;
+                    Update(TargetUpdateRate);
+                    lag -= TargetUpdateRate;
                 }
 
                 if (IsRunning)
                 {
-                    Render(lag / TargetUpdatesPerSecond);
+                    Render(lag / TargetUpdateRate);
                     GraphicsDevice?.SwapBuffers();
                     GraphicsDevice?.WaitForIdle();
                 }
