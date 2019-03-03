@@ -20,15 +20,14 @@ namespace DemoApplication
 
         public ConsoleDemo()
         {
-            LimitFrameRate = false;
-            TargetUpdatesPerSecond = 60.0;
+            PrintLine($"IsInputRedirected: {Console.IsInputRedirected}");
+            PrintLine($"LimitFrameRate: {LimitFrameRate = false}");
+            PrintLine($"TargetUpdatesPerSecond: {TargetUpdatesPerSecond = 60.0}");
         }
 
         protected override void CreateResources()
         {
             PrintLine("Creating resources");
-            PrintLine($"IsInputRedirected {Console.IsInputRedirected}");
-            PrintLine($"LimitFrameRate {LimitFrameRate}");
             renderStopwatch.Start();
             updateStopwatch.Start();
         }
