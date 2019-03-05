@@ -7,6 +7,7 @@ namespace Engine
 {
     public abstract class Application : IDisposable
     {
+        public bool IsConnected {get; private set; }
         public bool IsRunning { get; private set; }
         public bool LimitFrameRate { get; protected set; }
         public GraphicsDevice GraphicsDevice { get; private set; }
